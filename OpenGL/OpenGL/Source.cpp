@@ -2,27 +2,13 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "shader.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"layout (location = 1) in vec3 aColor; \n"
-"out vec3 ourColor;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos, 1.0);\n"
-"   ourColor = aColor;\n"
-"}\0";
-
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor; \n"
-"in vec3 ourColor; \n"
-"void main()\n"
-"{\n"
-"	FragColor = vec4(ourColor,1.0);\n"
-"}\0";
-
+void loadTextureData(const char* filename, GLuint &textureID, GLenum format);
 
 int main() {
 	glfwInit();
@@ -45,26 +31,28 @@ int main() {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	float vertices[] = {
-	-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-	 0.0f,  0.8f, 0.0f, 0.0f, 0.0f, 1.0f
-	};
-	float vertices2[] = {
-	 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-	 -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-	 0.0f,  -0.8f, 0.0f, 0.0f, 0.0f, 1.0f
-	};
+	GLfloat vertices[] = {
+		1.0f, 1.0f, 0.0f,   //position
+		1.0f, 0.0f, 0.0f,   //color // up right
+		4.0f, 4.0f,         //texture
 
-	float vertices1[] = {
-	 0.5f,  0.5f, 0.0f,  // top right
-	 0.5f, -0.5f, 0.0f,  // bottom right
-	-0.5f, -0.5f, 0.0f,  // bottom left
-	-0.5f,  0.5f, 0.0f   // top left 
+		-1.0f, -1.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, // bot left
+		0.0f, 0.0f,
+
+		1.0f, -1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f, // bot right
+		2.0f, 0.0f,        // here is smaller value than other
+
+		-1.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, // up left
+		0.0f, 4.0f
 	};
-	unsigned int indices[] = {  // note that we start from 0!
-		0, 1, 3,   // first triangle
-		1, 2, 3    // second triangle
+	unsigned int indices[] = {
+		0,2,1,
+		0, 1, 3 // first triangle
+		  // second triangle
+
 	};
 
 
@@ -74,33 +62,49 @@ int main() {
 
 
 
-	GLuint VAO[2];
-	glGenVertexArrays(2, VAO);
-	GLuint VBO[2];
-	glGenBuffers(2, VBO);
-	
-	glBindVertexArray(VAO[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+	GLuint VAO;
+	glGenVertexArrays(1, &VAO);
+	GLuint VBO;
+	glGenBuffers(1, &VBO);
+	GLuint EBO;
+	glGenBuffers(1, &EBO);
+
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
-	glEnableVertexAttribArray(1);
 
-	glBindVertexArray(VAO[1]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	
 
 //	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
-	Shader shader("C:/Users/Gürçay Taþcý/Desktop/Projects/opengl/OpenGL/OpenGL/vshader.glsl", "C:/Users/Gürçay Taþcý/Desktop/Projects/opengl/OpenGL/OpenGL/fshader.glsl");
-	shader.use();
+	// image loading
+	stbi_set_flip_vertically_on_load(true);
 
+	unsigned int texture;
+	
+	loadTextureData("../OpenGL/saul.jpg", texture, GL_RGB);
+
+	unsigned int anotherTexture;
+	
+	loadTextureData("../OpenGL/bcs.png", anotherTexture, GL_RGBA);
+
+
+	Shader shader("../OpenGL/vshader.glsl", "../OpenGL/fshader.glsl");
+	shader.use();
+	shader.setInt("texture1", 0);
+	shader.setInt("texture2", 1);
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
@@ -109,12 +113,24 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// triangle render
 
-		for (auto vao : VAO) {
-			glBindVertexArray(vao);
-			glDrawArrays(GL_TRIANGLES, 0, 3);
-		}
+		// time shit
+		float timeVal = glfwGetTime();
+		float timeSin = sin(2 * timeVal ) / 2 + 0.5f;
+		float timeMix = sin(timeVal) / 2 + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shader.ID, "timeColor");
+		glUniform1f(vertexColorLocation, timeSin);
+		shader.setFloat("timeMix", timeMix);
+		// triangle render
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, anotherTexture);
+
+		shader.use();
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		
 		
 		
 		
@@ -134,4 +150,28 @@ void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+}
+void loadTextureData(const char* filename, GLuint& textureID, GLenum format) {
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(filename, &width, &height, &nrChannels, 0);
+	
+	glGenTextures(1, &textureID );
+
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+	
 }
