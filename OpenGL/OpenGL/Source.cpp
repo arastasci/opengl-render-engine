@@ -2,6 +2,9 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "shader.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -32,21 +35,21 @@ int main() {
 		return -1;
 	}
 	GLfloat vertices[] = {
-		1.0f, 1.0f, 0.0f,   //position
+		0.7f, 0.7f, 0.0f,   //position
 		1.0f, 0.0f, 0.0f,   //color // up right
-		4.0f, 4.0f,         //texture
+		1.0f, 1.0f,         //texture
 
-		-1.0f, -1.0f, 0.0f,
+		-0.7f, -0.7f, 0.0f,
 		0.0f, 0.0f, 1.0f, // bot left
 		0.0f, 0.0f,
 
-		1.0f, -1.0f, 0.0f,
+		0.7f, -0.7f, 0.0f,
 		1.0f, 1.0f, 0.0f, // bot right
-		2.0f, 0.0f,        // here is smaller value than other
+		1.0f, 0.0f,        // here is smaller value than other
 
-		-1.0f, 1.0f, 0.0f,
+		-0.7f, 0.7f, 0.0f,
 		0.0f, 1.0f, 0.0f, // up left
-		0.0f, 4.0f
+		0.0f, 1.0f
 	};
 	unsigned int indices[] = {
 		0,2,1,
@@ -89,6 +92,10 @@ int main() {
 //	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
+	
+
+
+
 	// image loading
 	stbi_set_flip_vertically_on_load(true);
 
@@ -105,6 +112,7 @@ int main() {
 	shader.use();
 	shader.setInt("texture1", 0);
 	shader.setInt("texture2", 1);
+	float x{};
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
@@ -119,8 +127,22 @@ int main() {
 		float timeSin = sin(2 * timeVal ) / 2 + 0.5f;
 		float timeMix = sin(timeVal) / 2 + 0.5f;
 		int vertexColorLocation = glGetUniformLocation(shader.ID, "timeColor");
+
 		glUniform1f(vertexColorLocation, timeSin);
 		shader.setFloat("timeMix", timeMix);
+
+		// transformation
+		glm::mat4 trans = glm::mat4(1.0f);
+		
+		
+		x = (float)glfwGetTime() / 2;
+
+		trans = glm::rotate(trans,x , glm::vec3(0, 0, 1.0f));
+		unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		
+		
+
 		// triangle render
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -160,8 +182,8 @@ void loadTextureData(const char* filename, GLuint& textureID, GLenum format) {
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	if (data)
 	{
