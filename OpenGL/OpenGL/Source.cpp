@@ -13,6 +13,7 @@ void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void loadTextureData(const char* filename, GLuint &textureID, GLenum format);
+void moveLightCube(glm::vec3 &lightPos, float& radius, float& theta, float& phi);
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -110,13 +111,17 @@ int main() {
 	// image loading
 	stbi_set_flip_vertically_on_load(true);
 
-	unsigned int texture;
-	
-	loadTextureData("../OpenGL/saul.jpg", texture, GL_RGB);
+	unsigned int specularMap;
+	loadTextureData("../OpenGL/container2_specular.png", specularMap, GL_RGBA);
 
-	unsigned int anotherTexture;
-	
-	loadTextureData("../OpenGL/bcs.png", anotherTexture, GL_RGBA);
+	unsigned int diffuseMap;
+	loadTextureData("../OpenGL/container2.png", diffuseMap, GL_RGBA);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, diffuseMap);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, specularMap);
+
 
 
 	Shader lightingShader("../OpenGL/vshader.glsl", "../OpenGL/fshader.glsl");
@@ -160,13 +165,13 @@ int main() {
 	float theta = 0.0f;
 	float phi = 0.0f;
 
-	glm::vec3 lightPos(radius * cos(glm::radians(theta)) * cos(glm::radians(theta)), 
-		radius * sin(glm::radians(phi)),radius * sin(glm::radians(theta))* cos(glm::radians(phi)));
+	glm::vec3 lightPos(3,3,3);
 	lightingShader.use();
-	lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-	lightingShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-	lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-	lightingShader.setFloat("material.shininess", 32.0f);
+	lightingShader.setInt("material.specular", 1);
+	lightingShader.setInt("material.diffuse", 0);
+
+
+	lightingShader.setFloat("material.shininess", 64.0f);
 
 	lightingShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
 	lightingShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
@@ -191,33 +196,23 @@ int main() {
 		// rotate
 		theta = 30  * glfwGetTime();
 		phi = 30 * glfwGetTime();
-		lightPos = glm::vec3(radius * cos(glm::radians(theta)) * cos(glm::radians(theta)),
-			radius* sin(glm::radians(phi)), radius* sin(glm::radians(theta))* cos(glm::radians(phi)));
-
+	
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 3.0f));
+		moveLightCube(lightPos, radius, theta, phi);
+
 		lightingShader.use();
 		
 		lightingShader.setMat4("view", view);
 		lightingShader.setMat4("projection", projection);
 		lightingShader.setMat4("model", model);
 		lightingShader.setVec3("light.position", lightPos);
+		lightingShader.setVec3("viewPos", camera.Position);
+
+
+
 		
-
-		glm::vec3 lightColor;
-		lightColor.x = sin(glfwGetTime() * 2.0f);
-		lightColor.y = sin(glfwGetTime() * 0.7f);
-		lightColor.z = sin(glfwGetTime() * 1.3f);
-
-		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
-		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
-
-		lightingShader.setVec3("light.ambient", ambientColor);
-		lightingShader.setVec3("light.diffuse", diffuseColor);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		lightingShader.setInt("texture1", 0);
+		lightingShader.setInt("material.diffuse", 0);
 
 		glBindVertexArray(VAO);
 		
@@ -286,6 +281,13 @@ void processInput(GLFWwindow* window)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 	}
 	
+}
+
+
+void moveLightCube(glm::vec3& lightPos, float& radius, float& theta, float& phi) {
+	lightPos = glm::vec3(radius * cos(glm::radians(theta)) * cos(glm::radians(theta)),
+		radius * sin(glm::radians(phi)), radius * sin(glm::radians(theta)) * cos(glm::radians(phi)));
+
 }
 void loadTextureData(const char* filename, GLuint& textureID, GLenum format) {
 	int width, height, nrChannels;
