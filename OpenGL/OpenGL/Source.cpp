@@ -95,6 +95,25 @@ int main() {
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f
 	};
 
+
+
+	glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
+
+
+
+
 //	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
@@ -102,11 +121,7 @@ int main() {
 	glfwSetScrollCallback(window, scroll_callback);
 	glEnable(GL_DEPTH_TEST);
 	
-	unsigned int indices[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
-	};
-
+	
 
 	// image loading
 	stbi_set_flip_vertically_on_load(true);
@@ -116,11 +131,14 @@ int main() {
 
 	unsigned int diffuseMap;
 	loadTextureData("../OpenGL/container2.png", diffuseMap, GL_RGBA);
-
+	unsigned int emissionMap;
+	loadTextureData("../OpenGL/saul.jpg", emissionMap, GL_RGB);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, specularMap);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, emissionMap);
 
 
 
@@ -165,17 +183,22 @@ int main() {
 	float theta = 0.0f;
 	float phi = 0.0f;
 
-	glm::vec3 lightPos(3,3,3);
+	glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 	lightingShader.use();
-	lightingShader.setInt("material.specular", 1);
 	lightingShader.setInt("material.diffuse", 0);
+	lightingShader.setInt("material.specular", 1);
+	lightingShader.setInt("material.emission", 2);
+	lightingShader.setFloat("material.shininess", 32.0f);
 
-
-	lightingShader.setFloat("material.shininess", 64.0f);
-
-	lightingShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+	lightingShader.setVec3("light.ambient", 0.05f, 0.05f, 0.05f);
 	lightingShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
 	lightingShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
+
+	lightingShader.setFloat("light.constant", 1.0);
+	lightingShader.setFloat("light.linear", 0.14f);
+	lightingShader.setFloat("light.quadratic", 0.07f);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
@@ -196,30 +219,43 @@ int main() {
 		// rotate
 		theta = 30  * glfwGetTime();
 		phi = 30 * glfwGetTime();
-	
+		//moveLightCube(lightPos, radius, theta, phi);
+		
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 3.0f));
-		moveLightCube(lightPos, radius, theta, phi);
+
 
 		lightingShader.use();
-		
+		lightingShader.setVec3("light.position", camera.Position);
+		lightingShader.setVec3("light.direction", camera.Front);
+		lightingShader.setFloat("light.cutOff", cos(glm::radians(12.5f)));
+		lightingShader.setFloat("light.outerCutOff", cos(glm::radians(25.5f)));
+
 		lightingShader.setMat4("view", view);
 		lightingShader.setMat4("projection", projection);
-		lightingShader.setMat4("model", model);
-		lightingShader.setVec3("light.position", lightPos);
+
 		lightingShader.setVec3("viewPos", camera.Position);
 
 
 
 		
-		lightingShader.setInt("material.diffuse", 0);
 
 		glBindVertexArray(VAO);
 		
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (unsigned int i = 0; i < 10; i++)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			lightingShader.setMat4("model", model);
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 		
-		model = glm::mat4(1.0f);
+		/*model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.3f));
 		
 		lightCubeShader.use();
 		
@@ -228,7 +264,7 @@ int main() {
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
 		glBindVertexArray(lightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_TRIANGLES, 0, 36);*/
 		
 		
 		glfwPollEvents();
