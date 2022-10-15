@@ -80,6 +80,7 @@ public:
             }
             // shader Program
             ID = glCreateProgram();
+            
             glAttachShader(ID, vertex);
             glAttachShader(ID, fragment);
             glLinkProgram(ID);
