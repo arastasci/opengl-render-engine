@@ -45,4 +45,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="model_loading_f.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="lightcubev.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="lightcubef.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="model_loading_v.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

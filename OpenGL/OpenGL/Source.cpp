@@ -96,7 +96,7 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	Shader lightCubeShader("../OpenGL/lightcubevshader.glsl", "../OpenGL/lightingfshader.glsl");
+	Shader lightCubeShader("../OpenGL/lightcubev.glsl", "../OpenGL/lightcubef.glsl");
 	
 	
 
@@ -117,6 +117,23 @@ int main() {
 	glm::vec3 pointLightColors[] = { colorRed, colorGreen, colorBlue, colorYellow };
 
 	Model backpack("../OpenGL/backpack/backpack.obj");
+	lightingShader.use();
+	lightingShader.setVec3("dirLight.direction", glm::vec3(0.6f, -0.8f, 0.0f));
+	lightingShader.setVec3("dirLight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+	lightingShader.setVec3("dirLight.specular", glm::vec3(0.5f));
+	lightingShader.setVec3("dirLight.diffuse", glm::vec3(0.5f));
+	lightingShader.setFloat("material.shininess", 32.0f);
+
+	lightingShader.setVec3("pointLight.ambient", glm::vec3(0.3f, 0.3f, 0.3f));
+	lightingShader.setVec3("pointLight.specular", glm::vec3(1.0f));
+	lightingShader.setVec3("pointLight.diffuse", glm::vec3(1.0f));
+
+	lightingShader.setFloat("pointLight.constant", 1.0f);
+	lightingShader.setFloat("pointLight.linear", 0.7f);
+	lightingShader.setFloat("pointLight.quadratic", 1.8f);
+	float radius = 2.0f;
+	float phi = 0;
+	float theta = 0;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -124,7 +141,8 @@ int main() {
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		processInput(window);
-
+		phi = glfwGetTime() * 50;
+		theta = glfwGetTime() * 50;
 		// rendering commands;
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -135,17 +153,28 @@ int main() {
 		
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 3.0f));
-
+		lightingShader.setVec3("viewPos", camera.Position);
 
 		lightingShader.use();
 	
 		lightingShader.setMat4("view", view);
 		lightingShader.setMat4("projection", projection);
 		lightingShader.setMat4("model", model);
+		lightingShader.setVec3("pointLight.position", lightPos);
 		backpack.Draw(lightingShader);
-
+		lightCubeShader.use();
+		lightCubeShader.setMat4("view", view);
+		lightCubeShader.setMat4("projection", projection);
 		
+		
+		moveLightCube(lightPos, radius, phi, theta);
+		
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.1f));
 
+		lightCubeShader.setMat4("model", model);
+		
+		backpack.Draw(lightCubeShader);
 
 
 		
@@ -205,11 +234,11 @@ void processInput(GLFWwindow* window)
 
 
 void moveLightCube(glm::vec3& lightPos, float& radius, float& theta, float& phi) {
-	lightPos = glm::vec3(radius * cos(glm::radians(theta)) * cos(glm::radians(theta)),
+	lightPos = glm::vec3(0, 0, 3.0f) +glm::vec3(radius * cos(glm::radians(theta)) * cos(glm::radians(theta)),
 		radius * sin(glm::radians(phi)), radius * sin(glm::radians(theta)) * cos(glm::radians(phi)));
 
 }
-void loadTextureData(const char* filename, GLuint& textureID, GLenum format) {
+/*void loadTextureData(const char* filename, GLuint& textureID, GLenum format) {
 	int width, height, nrChannels;
 	unsigned char* data = stbi_load(filename, &width, &height, &nrChannels, 0);
 	
@@ -233,3 +262,4 @@ void loadTextureData(const char* filename, GLuint& textureID, GLenum format) {
 	stbi_image_free(data);
 	
 }
+*/

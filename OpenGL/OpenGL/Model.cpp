@@ -85,7 +85,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
             indices.push_back(face.mIndices[j]);
     }
 
-
     // process material
     if (mesh->mMaterialIndex >= 0)
     {
