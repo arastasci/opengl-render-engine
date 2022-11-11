@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Aras\Desktop\OpenGL\opengl\sdk\include;C:\Users\Gürçay Taşcı\Desktop\Projects\opengl\OpenGL\sdk\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Aras\Desktop\OpenGL\opengl\sdk\libs;C:\Users\Gürçay Taşcı\Desktop\Projects\opengl\OpenGL\sdk\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\sdk\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\sdk\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
