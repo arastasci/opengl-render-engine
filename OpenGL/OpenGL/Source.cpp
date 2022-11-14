@@ -10,11 +10,13 @@
 #include "Model.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+#include "Animation.h"
+#include "Animator.h"
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void loadTextureData(const char* filename, GLuint &textureID, GLenum format);
 void moveLightCube(glm::vec3 &lightPos, float& radius, float& theta, float& phi);
 
 // camera
@@ -100,7 +102,7 @@ int main() {
 	
 	
 
-	glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+	glm::vec3 lightPos(1.2f, 1.5f, 2.0f);
 	
 
 	glm::vec3 pointLightPositions[] = {
@@ -135,12 +137,19 @@ int main() {
 	float phi = 0;
 	float theta = 0;
 
+	Model hand("../OpenGL/defeated/Defeated.dae");
+	Animation handAnimation("../OpenGL/defeated/Defeated.dae", &hand);
+	Animator animator(&handAnimation);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		processInput(window);
+
+		animator.UpdateAnimation(deltaTime);
+
 		phi = glfwGetTime() * 50;
 		theta = glfwGetTime() * 50;
 		// rendering commands;
@@ -152,21 +161,25 @@ int main() {
 		glm::mat4 view = camera.GetViewMatrix();
 		
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 3.0f));
+		model = glm::scale(model, glm::vec3(1.0f));
 		lightingShader.setVec3("viewPos", camera.Position);
 
 		lightingShader.use();
 	
 		lightingShader.setMat4("view", view);
 		lightingShader.setMat4("projection", projection);
+		
+        auto transforms = animator.GetFinalBoneMatrices();
+        for (int i = 0; i < transforms.size(); ++i)
+            lightingShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
 		lightingShader.setMat4("model", model);
 		lightingShader.setVec3("pointLight.position", lightPos);
-		backpack.Draw(lightingShader);
+		hand.Draw(lightingShader);
+
 		lightCubeShader.use();
 		lightCubeShader.setMat4("view", view);
-		lightCubeShader.setMat4("projection", projection);
-		
-		
+		lightCubeShader.setMat4("projection", projection);	
 		moveLightCube(lightPos, radius, phi, theta);
 		
 		model = glm::translate(model, lightPos);
@@ -234,7 +247,7 @@ void processInput(GLFWwindow* window)
 
 
 void moveLightCube(glm::vec3& lightPos, float& radius, float& theta, float& phi) {
-	lightPos = glm::vec3(0, 0, 3.0f) +glm::vec3(radius * cos(glm::radians(theta)) * cos(glm::radians(theta)),
+	lightPos = glm::vec3(radius * cos(glm::radians(theta)) * cos(glm::radians(theta)),
 		radius * sin(glm::radians(phi)), radius * sin(glm::radians(theta)) * cos(glm::radians(phi)));
 
 }
