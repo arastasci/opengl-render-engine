@@ -3,6 +3,24 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+
+
+
+# 3d model files
+*.obj
+*.mtl
+*.dae
+# image files
+*.png
+*.jpg
+*.jpeg
+# texture folders (in case)
+[Tt]extures/
+
+
+
+
+
 # User-specific files
 *.rsuser
 *.suo

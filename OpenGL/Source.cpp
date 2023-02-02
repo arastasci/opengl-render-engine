@@ -8,6 +8,8 @@
 #include <assimp/Importer.hpp>
 #include "camera.h"
 #include "Model.h"
+#include <assimp/Logger.hpp>
+#include <assimp/DefaultLogger.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -54,14 +56,16 @@ int main() {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
+	Assimp::DefaultLogger::create("", Assimp::Logger::VERBOSE);
+	Assimp::LogStream* stderrStream = Assimp::LogStream::createDefaultStream(aiDefaultLogStream_STDERR);
+	Assimp::DefaultLogger::get()->attachStream(stderrStream, Assimp::Logger::NORMAL | Assimp::Logger::DEBUGGING | Assimp::Logger::VERBOSE);
 
 
 
 
 
 
-
-//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
 
@@ -77,7 +81,7 @@ int main() {
 
 
 
-	Shader lightingShader("../OpenGL/model_loading_v.glsl", "../OpenGL/model_loading_f.glsl");
+	Shader lightingShader("../OpenGL/shaders/model_loading_v.glsl", "../OpenGL/shaders/model_loading_f.glsl");
 
 
 
@@ -98,8 +102,8 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	Shader lightCubeShader("../OpenGL/lightcubev.glsl", "../OpenGL/lightcubef.glsl");
-	
+	//Shader lightCubeShader("../OpenGL/shaders/lightcubev.glsl", "../OpenGL/shaders/lightcubef.glsl");
+	Shader lampShader("../OpenGL/shaders/lampShader_v.glsl", "../OpenGL/shaders/lampShader_f.glsl");
 	
 
 	glm::vec3 lightPos(1.2f, 1.5f, 2.0f);
@@ -118,7 +122,7 @@ int main() {
 
 	glm::vec3 pointLightColors[] = { colorRed, colorGreen, colorBlue, colorYellow };
 
-	Model backpack("../OpenGL/backpack/backpack.obj");
+	//Model backpack("../OpenGL/backpack/backpack.obj");
 	lightingShader.use();
 	lightingShader.setVec3("dirLight.direction", glm::vec3(0.6f, -0.8f, 0.0f));
 	lightingShader.setVec3("dirLight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
@@ -141,6 +145,19 @@ int main() {
 	Animation handAnimation("../OpenGL/defeated/Defeated.dae", &hand);
 	Animator animator(&handAnimation);
 
+
+	Model lampModel("../opengl/lightbulb/Bombilla.obj");
+	lampShader.use();
+	lampShader.setFloat("material.shininess", 32.0f);
+	lampShader.setVec3("dirLight.direction", glm::vec3(0.6f, -0.8f, 0.0f));
+	lampShader.setVec3("dirLight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+	lampShader.setVec3("dirLight.specular", glm::vec3(0.5f));
+	lampShader.setVec3("dirLight.diffuse", glm::vec3(0.5f));
+
+	Assimp::DefaultLogger::kill();
+
+
+
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = static_cast<float>(glfwGetTime());
@@ -148,10 +165,10 @@ int main() {
 		lastFrame = currentFrame;
 		processInput(window);
 
-		animator.UpdateAnimation(deltaTime);
+		 animator.UpdateAnimation(deltaTime);
 
 		phi = glfwGetTime() * 50;
-		theta = glfwGetTime() * 50;
+		theta = glfwGetTime() * 20;
 		// rendering commands;
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -162,10 +179,9 @@ int main() {
 		
 		glm::mat4 model(1.0f);
 		model = glm::scale(model, glm::vec3(1.0f));
-		lightingShader.setVec3("viewPos", camera.Position);
 
 		lightingShader.use();
-	
+		lightingShader.setVec3("viewPos", camera.Position);
 		lightingShader.setMat4("view", view);
 		lightingShader.setMat4("projection", projection);
 		
@@ -177,17 +193,16 @@ int main() {
 		lightingShader.setVec3("pointLight.position", lightPos);
 		hand.Draw(lightingShader);
 
-		lightCubeShader.use();
-		lightCubeShader.setMat4("view", view);
-		lightCubeShader.setMat4("projection", projection);	
+		lampShader.use();
+		lampShader.setVec3("viewPos", camera.Position);
+		lampShader.setMat4("view", view);
+		lampShader.setMat4("projection", projection);
 		moveLightCube(lightPos, radius, phi, theta);
 		
 		model = glm::translate(model, lightPos);
-		model = glm::scale(model, glm::vec3(0.1f));
-
-		lightCubeShader.setMat4("model", model);
-		
-		backpack.Draw(lightCubeShader);
+		model = glm::scale(model, glm::vec3(2.0f));
+		lampShader.setMat4("model", model);
+		lampModel.Draw(lampShader);
 
 
 		
@@ -196,6 +211,7 @@ int main() {
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
+	
 
 	glfwTerminate();
 	return 0;
@@ -247,32 +263,7 @@ void processInput(GLFWwindow* window)
 
 
 void moveLightCube(glm::vec3& lightPos, float& radius, float& theta, float& phi) {
-	lightPos = glm::vec3(radius * cos(glm::radians(theta)) * cos(glm::radians(theta)),
-		radius * sin(glm::radians(phi)), radius * sin(glm::radians(theta)) * cos(glm::radians(phi)));
+	lightPos = glm::vec3(radius * glm::sin(glm::radians(theta)) * glm::cos(glm::radians(phi)),
+		 radius * glm::sin(glm::radians(theta)) * glm::sin(glm::radians(phi)), radius * glm::cos(glm::radians(theta))) ;
 
 }
-/*void loadTextureData(const char* filename, GLuint& textureID, GLenum format) {
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load(filename, &width, &height, &nrChannels, 0);
-	
-	glGenTextures(1, &textureID );
-
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
-	
-}
-*/

@@ -56,19 +56,18 @@
     <ClInclude Include="Animator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AssimpGLMHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="model_loading_f.glsl">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="lightcubev.glsl">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="lightcubef.glsl">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="model_loading_v.glsl">
-      <Filter>Source Files</Filter>
-    </None>
+    <None Include="shaders\model_loading_v.glsl" />
+    <None Include="shaders\fshader.glsl" />
+    <None Include="shaders\lightcubef.glsl" />
+    <None Include="shaders\lightcubev.glsl" />
+    <None Include="shaders\vshader.glsl" />
+    <None Include="shaders\model_loading_f.glsl" />
+    <None Include="shaders\lampShader_v.glsl" />
+    <None Include="shaders\lampShader_f.glsl" />
   </ItemGroup>
 </Project>

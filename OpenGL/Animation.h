@@ -1,11 +1,11 @@
 #pragma once
-#include "Model.h"
 #include <assimp/scene.h>
 #include <map>
 #include "Bone.h"
 #include <vector>
 #include <string>
 #include <glm/glm.hpp>
+#include "Model.h"
 struct AssimpNodeData
 {
     glm::mat4 transformation;

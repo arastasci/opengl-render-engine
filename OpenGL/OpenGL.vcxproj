@@ -142,6 +142,7 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Animator.h" />
+    <ClInclude Include="AssimpGLMHelpers.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="Mesh.h" />
@@ -150,10 +151,14 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="lightcubef.glsl" />
-    <None Include="lightcubev.glsl" />
-    <None Include="model_loading_f.glsl" />
-    <None Include="model_loading_v.glsl" />
+    <None Include="shaders\fshader.glsl" />
+    <None Include="shaders\lampShader_f.glsl" />
+    <None Include="shaders\lampShader_v.glsl" />
+    <None Include="shaders\lightcubef.glsl" />
+    <None Include="shaders\lightcubev.glsl" />
+    <None Include="shaders\model_loading_f.glsl" />
+    <None Include="shaders\model_loading_v.glsl" />
+    <None Include="shaders\vshader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
