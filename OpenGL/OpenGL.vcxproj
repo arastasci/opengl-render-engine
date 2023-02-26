@@ -152,6 +152,8 @@
     <ClInclude Include="AssimpGLMHelpers.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="engine\Input.h" />
+    <ClInclude Include="engine\Window.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_glfw.h" />
@@ -163,6 +165,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="engine\Renderer.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>

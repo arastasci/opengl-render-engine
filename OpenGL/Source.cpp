@@ -19,18 +19,15 @@
 
 #include "Animation.h"
 #include "Animator.h"
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+#include "engine/Renderer.h"
+#include "engine/Window.h"
+#include "engine/Input.h"
+using namespace Engine;
 void moveLightCube(glm::vec3 &lightPos, float& radius, float& theta, float& phi);
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
-const int SCR_WIDTH = 1920;
-const int SCR_HEIGHT = 1080;
 const float MOVE_SPEED = 2.5f;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -41,22 +38,8 @@ float pitch = -90.0f;
 bool firstMouse = true;
 float fov = 45.0f;
 int main() {
-	glfwInit();
 	
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-	if (window == NULL)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwMakeContextCurrent(window);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+	Window* window = Engine::Window::Create();
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
@@ -66,14 +49,9 @@ int main() {
 	Assimp::LogStream* stderrStream = Assimp::LogStream::createDefaultStream(aiDefaultLogStream_STDERR);
 	Assimp::DefaultLogger::get()->attachStream(stderrStream, Assimp::Logger::NORMAL | Assimp::Logger::DEBUGGING | Assimp::Logger::VERBOSE);
 
-
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	Input::Init(window->GetGLFWwindow());
+	Input::SetInitialCallbacks(window->GetGLFWwindow());
 	glEnable(GL_DEPTH_TEST);
-		
 
 	// image loading
 	stbi_set_flip_vertically_on_load(true);
@@ -93,7 +71,7 @@ int main() {
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGui::StyleColorsDark();
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWwindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 330 core");
 
 
@@ -108,7 +86,6 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//Shader lightCubeShader("../OpenGL/shaders/lightcubev.glsl", "../OpenGL/shaders/lightcubef.glsl");
 	Shader lampShader("../OpenGL/shaders/lampShader_v.glsl", "../OpenGL/shaders/lampShader_f.glsl");
 	
 
@@ -134,8 +111,8 @@ int main() {
 	lightingShader.setFloat("material.shininess", materialShininess);
 
 	lightingShader.setVec3("pointLight.ambient", pointLightAmbient);
-	lightingShader.setVec3("pointLight.specular", pointLightDiffuse);
-	lightingShader.setVec3("pointLight.diffuse", pointLightSpecular);
+	lightingShader.setVec3("pointLight.specular", pointLightSpecular);
+	lightingShader.setVec3("pointLight.diffuse", pointLightDiffuse);
 
 	lightingShader.setFloat("pointLight.constant", 1.0f);
 	lightingShader.setFloat("pointLight.linear", 0.7f);
@@ -158,7 +135,7 @@ int main() {
 	lampShader.setVec3("dirLight.diffuse", directionalLightDiffuse);
 
 	Assimp::DefaultLogger::kill();
-
+	bool canMoveLightCube = false;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -204,7 +181,24 @@ int main() {
 		ImGui::ColorEdit3("Specular", &directionalLightSpecular.x);
 		ImGui::BeginChild("Point Light");
 		ImGui::Text("Point Light");
-		ImGui::SliderFloat3("Position", &lightPos.x, -2.f,2.f);
+		if (ImGui::Button("Move Light Caster Around")) {
+			canMoveLightCube = !canMoveLightCube;
+		}
+		if (canMoveLightCube) {
+			ImGui::SliderFloat("Radius", &radius, 1.25f, 2.f);
+			ImGui::BeginDisabled();
+			ImGui::SliderFloat3("Position", &lightPos.x, -2.f, 2.f);
+			ImGui::EndDisabled();
+
+		}
+		else {
+			ImGui::BeginDisabled();
+			ImGui::SliderFloat("Radius", &radius, 1.25f, 2.f);
+			ImGui::EndDisabled();
+
+			ImGui::SliderFloat3("Position", &lightPos.x, -2.f, 2.f);
+
+		}
 		ImGui::ColorEdit3("Ambient", &pointLightAmbient.x);
 		ImGui::ColorEdit3("Diffuse", &pointLightDiffuse.x);
 		ImGui::ColorEdit3("Specular", &pointLightSpecular.x);
@@ -214,7 +208,7 @@ int main() {
 		
 		ImGui::End();
 
-
+		if (canMoveLightCube) moveLightCube(lightPos, radius, theta, phi);
 
 		// camera
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 100.0f);
@@ -249,7 +243,6 @@ int main() {
 		lampShader.setVec3("viewPos", camera.Position);
 		lampShader.setMat4("view", view);
 		lampShader.setMat4("projection", projection);
-		//moveLightCube(lightPos, radius, phi, theta);
 		
 		model = glm::translate(model, lightPos + offset);
 		model = glm::scale(model, glm::vec3(2.0f));
@@ -270,39 +263,9 @@ int main() {
 	glfwTerminate();
 	return 0;
 }
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height);
-}
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-	auto& io = ImGui::GetIO();
-	if (io.WantCaptureMouse || io.WantCaptureKeyboard || (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)) {
-		return;
-	}
 
-	camera.ProcessMouseScroll(yoffset);
-}
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
-	auto& io = ImGui::GetIO();
-	if (io.WantCaptureMouse || io.WantCaptureKeyboard || (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)) {
-		return;
-	}
 
-	float xpos = (float)xposIn;
-	float ypos = (float)yposIn;
-	if (firstMouse) {
-		lastX = xpos;
-		lastY = xpos;
-		firstMouse = false;
-	}
-	float xOffset = xpos - lastX;
-	float yOffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-	camera.ProcessMouseMovement(xOffset, yOffset);
-}
 
 
 void processInput(GLFWwindow* window)
@@ -334,19 +297,7 @@ void processInput(GLFWwindow* window)
 	
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_Q && action == GLFW_PRESS)
-	{
-		if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		else
-		{
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		}
-	}
-}
 void moveLightCube(glm::vec3& lightPos, float& radius, float& theta, float& phi) {
 	lightPos = glm::vec3(radius * glm::sin(glm::radians(theta)) * glm::cos(glm::radians(phi)),
 		 radius * glm::sin(glm::radians(theta)) * glm::sin(glm::radians(phi)), radius * glm::cos(glm::radians(theta))) ;
