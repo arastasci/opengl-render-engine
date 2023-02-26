@@ -9,14 +9,24 @@ Model::Model(std::string path)
 {
     loadModel(path);
 }
-void Model::Draw(Shader& shader)
+Model::Model(std::string path, ShaderProps& props)
 {
+    shaderProps = props;
+    loadModel(path);
+}
+void Model::Draw(Shader& shader)  
+{
+    shader.setShaderProps(shaderProps);
     for (unsigned int i = 0; i < meshes.size(); i++)
         meshes[i].Draw(shader);
 }
 
 
 std::map<std::string, BoneInfo>& Model::GetBoneInfoMap() { return m_BoneInfoMap; }
+ShaderProps& Model::GetShaderProps()
+{
+    return shaderProps;
+}
 int& Model::GetBoneCount() { return m_BoneCounter; }
 
 void SetVertexBoneDataToDefault(Vertex& vertex)

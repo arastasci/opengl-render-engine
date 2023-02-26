@@ -151,8 +151,9 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="AssimpGLMHelpers.h" />
     <ClInclude Include="Bone.h" />
-    <ClInclude Include="camera.h" />
+    <ClInclude Include="engine\camera.h" />
     <ClInclude Include="engine\Input.h" />
+    <ClInclude Include="engine\ShaderProps.h" />
     <ClInclude Include="engine\Window.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />

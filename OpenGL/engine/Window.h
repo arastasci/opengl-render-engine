@@ -2,11 +2,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <memory>
 namespace Engine {
 	class Window {
 	public:
 		static Window* Create() {
-			return &Window();
+			Window w;
+			Window* windowPointer = &w;
+			
+			return windowPointer;
 		}
 		Window() {
 			glfwInit();
@@ -28,14 +32,20 @@ namespace Engine {
 		GLFWwindow* GetGLFWwindow() {
 			return window;
 		}
+		int GetScrWidth() {
+			return SCR_WIDTH;
+		}
+		int GetScrHeight() {
+			return SCR_HEIGHT;
+		}
 	private:
 		GLFWwindow* window;
 		const int SCR_WIDTH = 1920;
 		const int SCR_HEIGHT = 1080;
-		
+		static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+		{
+			glViewport(0, 0, width, height);
+		}
 	};
-	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-	{
-		glViewport(0, 0, width, height);
-	}
+	
 }

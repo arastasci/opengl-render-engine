@@ -10,7 +10,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
+#include "engine/ShaderProps.h"
 
 class Shader
 {
@@ -95,6 +95,24 @@ public:
             // delete the shaders as they're linked into our program now and no longer necessary
             glDeleteShader(vertex);
             glDeleteShader(fragment);
+    }
+    void setShaderProps(ShaderProps& props) {
+        use();
+
+        setFloat("material.shininess", props.materialShininess);
+
+        setVec3("dirLight.direction", props.dirLightProps.direction);
+        setVec3("dirLight.ambient", props.dirLightProps.ambient);
+        setVec3("dirLight.specular", props.dirLightProps.specular);
+        setVec3("dirLight.diffuse", props.dirLightProps.diffuse);
+
+        setVec3("pointLight.ambient", props.pointLightProps[0].ambient);
+        setVec3("pointLight.specular", props.pointLightProps[0].specular);
+        setVec3("pointLight.diffuse", props.pointLightProps[0].diffuse);
+
+        setFloat("pointLight.constant", props.pointLightProps[0].constant);
+        setFloat("pointLight.linear", props.pointLightProps[0].linear);
+        setFloat("pointLight.quadratic", props.pointLightProps[0].quadratic);
     }
     // use/activate the shader
     void use() {

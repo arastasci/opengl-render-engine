@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <assimp/scene.h>
-
+#include "engine/ShaderProps.h"
 #define MAX_BONE_INFLUENCE 4
 
 struct Texture {
@@ -43,6 +43,7 @@ public:
 private:
     //  render data
     unsigned int VAO, VBO, EBO;
+
 
     void setupMesh();
 };

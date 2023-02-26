@@ -56,7 +56,7 @@
     <ClInclude Include="shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="camera.h">
+    <ClInclude Include="engine\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
@@ -114,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\ShaderProps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
