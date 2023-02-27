@@ -5,7 +5,6 @@
 #include <vector>
 #include "Mesh.h"
 #include <map>
-#include "Animator.h"
 #include "engine/ShaderProps.h"
 
 #define MAX_BONE_WEIGHTS 4

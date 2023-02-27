@@ -40,6 +40,7 @@ namespace Engine {
 		}
 	private:
 		GLFWwindow* window;
+		
 		const int SCR_WIDTH = 1920;
 		const int SCR_HEIGHT = 1080;
 		static void framebuffer_size_callback(GLFWwindow* window, int width, int height)

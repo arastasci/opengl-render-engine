@@ -2,25 +2,41 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "camera.h"
+
+
+Camera* Camera::camera;
+
 namespace Engine {
 	class Input {
 		public:
-			static void Init(GLFWwindow* window) {
-				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-				lastX = 400, lastY = 300, yaw = 0, pitch = -90.f;
-				firstMouse = true;
-				fov = 45.f;
-				MOVE_SPEED = 2.5f;
+			static Input* singleton;
+			enum CallbackType {
+				MOUSE_POSITION = 0,
+				SCROLL,
+				KEY
+			};
+			Input() {
+				if (singleton) return;
+				singleton = this;
+				
+
 			}
-			static void SetInitialCallbacks(GLFWwindow* window) {
+			void Init(GLFWwindow* window) {
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			
+			}
+
+			void SetInitialCallbacks(GLFWwindow* window) {
 				glfwSetCursorPosCallback(window, mouse_callback);
 				glfwSetKeyCallback(window, key_callback);
 				glfwSetScrollCallback(window, scroll_callback);
 			}
-			static void UpdateDeltaTime(float dt) {
+			
+
+			void UpdateDeltaTime(float dt) {
 				deltaTime = dt;
 			}
-			static void processInput(GLFWwindow* window)
+			void processInput(GLFWwindow* window)
 			{
 				auto& io = ImGui::GetIO();
 				if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
@@ -48,58 +64,11 @@ namespace Engine {
 				}
 
 			}
-		private:
-			static float MOVE_SPEED;
-			static float lastX, lastY;
-			static float yaw;
-			static float pitch ;
-			static bool firstMouse;
-			static float fov;
-			static float deltaTime;
-			 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-				auto& io = ImGui::GetIO();
-				if (io.WantCaptureMouse || io.WantCaptureKeyboard || (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)) {
-					return;
-				}
-
-				Camera::camera->ProcessMouseScroll(yoffset);
-			}
-			static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
-				auto& io = ImGui::GetIO();
-				if (io.WantCaptureMouse || io.WantCaptureKeyboard || (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)) {
-					return;
-				}
-
-				float xpos = (float)xposIn;
-				float ypos = (float)yposIn;
-				if (firstMouse) {
-					lastX = xpos;
-					lastY = xpos;
-					firstMouse = false;
-				}
-				float xOffset = xpos - lastX;
-				float yOffset = lastY - ypos;
-				lastX = xpos;
-				lastY = ypos;
-
-				Camera::camera->ProcessMouseMovement(xOffset, yOffset);
-			}
-
-			static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-			{
-				if (key == GLFW_KEY_Q && action == GLFW_PRESS)
-				{
-					if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
-						glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-					else
-					{
-						glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-					}
-				}
-			}
+		
+	private:
+		float deltaTime = 0.f;
+			
 
 	};
-	
-	
 }
+

@@ -31,10 +31,20 @@ void moveLightCube(glm::vec3 &lightPos, float& radius, float& theta, float& phi)
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
-const float MOVE_SPEED = 2.5f;
-float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+const float MOVE_SPEED = 2.5f;
+float lastX = 400, lastY = 300;
+float yaw = 0.f;
+float pitch = -90.f;
+bool firstMouse = true;
+float fov = 45.f;
 
+float deltaTime;
+
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 
 int main() {
 	
@@ -48,8 +58,9 @@ int main() {
 	Assimp::LogStream* stderrStream = Assimp::LogStream::createDefaultStream(aiDefaultLogStream_STDERR);
 	Assimp::DefaultLogger::get()->attachStream(stderrStream, Assimp::Logger::NORMAL | Assimp::Logger::DEBUGGING | Assimp::Logger::VERBOSE);
 
-	Input::Init(window->GetGLFWwindow());
-	Input::SetInitialCallbacks(window->GetGLFWwindow());
+	Input input;
+	input.Init(window->GetGLFWwindow());
+	input.SetInitialCallbacks(window->GetGLFWwindow());
 	glEnable(GL_DEPTH_TEST);
 
 	// image loading
@@ -90,7 +101,7 @@ int main() {
 	DirLight dirLight(directionalLightDirection, directionalLightAmbient, directionalLightDiffuse, directionalLightSpecular);
 	PointLight pointLight(&lightPos, pointLightAmbient,
 		pointLightDiffuse, pointLightSpecular, pointLightConstant, pointLightLinear, pointLightQuadratic);
-	ShaderProps props(dirLight, &pointLight);
+	ShaderProps props(dirLight, &pointLight, 32.f);
 
 
 	lightingShader.setShaderProps(props);
@@ -113,7 +124,7 @@ int main() {
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		Input::UpdateDeltaTime(deltaTime);
+		input.UpdateDeltaTime(deltaTime);
 		
 		
 			
@@ -133,7 +144,7 @@ int main() {
 		ImGui::NewFrame();
 
 	
-		Input::processInput(window->GetGLFWwindow());
+		input.processInput(window->GetGLFWwindow());
 		
 	
 
@@ -233,4 +244,47 @@ void moveLightCube(glm::vec3& lightPos, float& radius, float& theta, float& phi)
 	lightPos = glm::vec3(radius * glm::sin(glm::radians(theta)) * glm::cos(glm::radians(phi)),
 		 radius * glm::sin(glm::radians(theta)) * glm::sin(glm::radians(phi)), radius * glm::cos(glm::radians(theta))) ;
 
+}
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+	auto& io = ImGui::GetIO();
+	if (io.WantCaptureMouse || io.WantCaptureKeyboard || (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)) {
+		return;
+	}
+
+	camera.ProcessMouseScroll(yoffset);
+}
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+{
+	auto& io = ImGui::GetIO();
+	if (io.WantCaptureMouse || io.WantCaptureKeyboard || (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)) {
+		return;
+	}
+
+	float xpos = (float)xposIn;
+	float ypos = (float)yposIn;
+	if (firstMouse) {
+		lastX = xpos;
+		lastY = xpos;
+		firstMouse = false;
+	}
+	float xOffset = xpos - lastX;
+	float yOffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+
+	Camera::camera->ProcessMouseMovement(xOffset, yOffset);
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+	{
+		if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		else
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+		}
+	}
 }
