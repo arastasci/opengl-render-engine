@@ -6,11 +6,8 @@
 namespace Engine {
 	class Window {
 	public:
-		static Window* Create() {
-			Window w;
-			Window* windowPointer = &w;
-			
-			return windowPointer;
+		static std::unique_ptr<Window>Create() {
+			return std::make_unique<Window>();
 		}
 		Window() {
 			glfwInit();

@@ -32,12 +32,7 @@ void moveLightCube(glm::vec3 &lightPos, float& radius, float& theta, float& phi)
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 float lastFrame = 0.0f;
-const float MOVE_SPEED = 2.5f;
-float lastX = 400, lastY = 300;
-float yaw = 0.f;
-float pitch = -90.f;
-bool firstMouse = true;
-float fov = 45.f;
+
 
 float deltaTime;
 
@@ -48,7 +43,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 
 int main() {
 	
-	Window* window = Engine::Window::Create();
+	std::unique_ptr<Window> window = Engine::Window::Create();
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
@@ -58,9 +53,11 @@ int main() {
 	Assimp::LogStream* stderrStream = Assimp::LogStream::createDefaultStream(aiDefaultLogStream_STDERR);
 	Assimp::DefaultLogger::get()->attachStream(stderrStream, Assimp::Logger::NORMAL | Assimp::Logger::DEBUGGING | Assimp::Logger::VERBOSE);
 
-	Input input;
-	input.Init(window->GetGLFWwindow());
-	input.SetInitialCallbacks(window->GetGLFWwindow());
+	Input input(window->GetGLFWwindow());
+	input.Init();
+	input.SetInitialCallbacks();
+	
+	
 	glEnable(GL_DEPTH_TEST);
 
 	// image loading
@@ -144,7 +141,7 @@ int main() {
 		ImGui::NewFrame();
 
 	
-		input.processInput(window->GetGLFWwindow());
+		input.processInput();
 		
 	
 
@@ -245,46 +242,4 @@ void moveLightCube(glm::vec3& lightPos, float& radius, float& theta, float& phi)
 		 radius * glm::sin(glm::radians(theta)) * glm::sin(glm::radians(phi)), radius * glm::cos(glm::radians(theta))) ;
 
 }
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-	auto& io = ImGui::GetIO();
-	if (io.WantCaptureMouse || io.WantCaptureKeyboard || (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)) {
-		return;
-	}
 
-	camera.ProcessMouseScroll(yoffset);
-}
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
-{
-	auto& io = ImGui::GetIO();
-	if (io.WantCaptureMouse || io.WantCaptureKeyboard || (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)) {
-		return;
-	}
-
-	float xpos = (float)xposIn;
-	float ypos = (float)yposIn;
-	if (firstMouse) {
-		lastX = xpos;
-		lastY = xpos;
-		firstMouse = false;
-	}
-	float xOffset = xpos - lastX;
-	float yOffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-	Camera::camera->ProcessMouseMovement(xOffset, yOffset);
-}
-
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_Q && action == GLFW_PRESS)
-	{
-		if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		else
-		{
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-		}
-	}
-}
