@@ -65,7 +65,6 @@ int main() {
 
 
 
-	Shader lightingShader("../OpenGL/shaders/model_loading_v.glsl", "../OpenGL/shaders/model_loading_f.glsl");
 
 
 
@@ -98,8 +97,9 @@ int main() {
 	DirLight dirLight(&directionalLightDirection,&directionalLightAmbient, &directionalLightDiffuse, &directionalLightSpecular);
 	PointLight pointLight(&lightPos, &pointLightAmbient,
 		&pointLightDiffuse, &pointLightSpecular, &pointLightConstant, &pointLightLinear, &pointLightQuadratic);
-	ShaderProps props(&dirLight, &pointLight, 32.f);
+	ShaderProps globalLightProps(&dirLight, &pointLight, 32.f);
 
+	Shader lightingShader("../src/shaders/model_loading_v.glsl", "../src/shaders/model_loading_f.glsl", &globalLightProps);
 
 	
 	float radius = 2.0f;
@@ -108,19 +108,19 @@ int main() {
 	Scene scene;
 	Renderer renderer(window, &scene);
 
-	Model boss("../OpenGL/defeated/Defeated.dae", props);
-	Animation bossAnimation("../OpenGL/defeated/Defeated.dae", &boss);
+	Model boss("../src/defeated/Defeated.dae");
+	Animation bossAnimation("../src/defeated/Defeated.dae", &boss);
 	Animator animator(&bossAnimation);
-	Transform t;
-	scene.CreateRenderObject(t, boss, &lightingShader, &animator);
+	//Transform t;
+	scene.CreateRenderObject(boss, &lightingShader, &animator);
 
-	Shader lampShader("../OpenGL/shaders/lampShader_v.glsl", "../OpenGL/shaders/lampShader_f.glsl");
+	Shader lampShader("../src/shaders/lampShader_v.glsl", "../src/shaders/lampShader_f.glsl", &globalLightProps);
 
-	Model lampModel("../opengl/lightbulb/Bombilla.obj", props);
-	
-	scene.CreateRenderObject(t, lampModel, &lampShader, nullptr);
-
+	Model lampModel("../src/lightbulb/Bombilla.obj");
 	Assimp::DefaultLogger::kill();
+	RenderObject* lampObject = scene.CreateRenderObject(lampModel, &lampShader, nullptr);
+	//lampObject->SetPointLight(&pointLight);
+	
 	bool canMoveLightCube = false;
 	
 
@@ -187,8 +187,10 @@ int main() {
 
 		}
 		ImGui::ColorEdit3("Ambient", &pointLightAmbient.x);
+
 		ImGui::ColorEdit3("Diffuse", &pointLightDiffuse.x);
 		ImGui::ColorEdit3("Specular", &pointLightSpecular.x);
+
 		ImGui::EndChild();
 		ImGui::EndChild();
 		
@@ -197,26 +199,8 @@ int main() {
 
 		if (canMoveLightCube) moveLightCube(lightPos, radius, theta, phi);
 
-		// camera
-		
-		//glm::mat4 view = Camera::Get().GetViewMatrix();
-		
-		glm::mat4 model(1.0f);
-		model = glm::scale(model, glm::vec3(1.0f));
-
-		//lightingShader.setShaderProps(props, model, view, projection, Camera::Get().Position);
+	
 		renderer.RenderObjects();
-		
-
-		
-		/*boss.Draw(lightingShader);
-		
-		
-		model = glm::translate(model, lightPos + offset);
-		model = glm::scale(model, glm::vec3(2.0f));
-		lampShader.setShaderProps(props, model, view, projection, Camera::Get().Position);
-		
-		lampModel.Draw(lampShader);*/
 
 
 		ImGui::Render();

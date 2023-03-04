@@ -17,7 +17,6 @@ class Model
 {
 public:
     Model(std::string path);
-    Model(std::string path, ShaderProps& shaderProps);
     void Draw(Shader& shader);
 
     std::map<std::string, BoneInfo>& GetBoneInfoMap();

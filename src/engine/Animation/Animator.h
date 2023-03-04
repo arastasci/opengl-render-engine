@@ -5,7 +5,6 @@ class Animator
 {
 public:
     Animator(Animation* Animation);
-
     void UpdateAnimation(float dt);
 
     void PlayAnimation(Animation* pAnimation);

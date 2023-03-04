@@ -19,7 +19,7 @@ class Animation
 {
 public:
     Animation() = default;
-
+    Animation(Animation&& animation) = default;
     Animation(const std::string& animationPath, Model* model) 
     {
         Assimp::Importer importer;
