@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include "RenderObject.h"
+#include "Entity.h"
 #include "engine/Core/Window.h"
 #include "camera.h"
 #include "Scene.h"
@@ -17,12 +17,12 @@ namespace Engine {
 
 		void SetToPolygonMode();
 	
-		void RenderObjects();
+		void RenderEntities();
 	private:
 		glm::mat4 projectionMatrix;
 		glm::mat4 viewMatrix;
 		std::shared_ptr<Window> window;
-		std::vector<RenderObject> renderObjects;
+		std::vector<Entity> renderObjects;
 		Scene* scene;
 		void SetViewMatrix();
 		void SetProjectionMatrix();

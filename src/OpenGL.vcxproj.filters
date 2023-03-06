@@ -45,7 +45,7 @@
     <ClCompile Include="engine\Animation\Animator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Render\RenderObject.cpp">
+    <ClCompile Include="engine\Render\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="engine\Mesh.cpp">
@@ -116,7 +116,7 @@
     <ClInclude Include="engine\Animation\Bone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Render\RenderObject.h">
+    <ClInclude Include="engine\Render\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\Transform.h">

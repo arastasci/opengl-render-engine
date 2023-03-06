@@ -39,7 +39,7 @@ public:
         m_textures = textures;
         setupMesh();
     };
-    void Draw(Shader& shader);
+    void Draw(Shader& shader) const;
 private:
     //  render data
     unsigned int VAO, VBO, EBO;

@@ -11,6 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "ShaderProps.h"
+#include <memory>
 
 class Shader
 {
@@ -22,7 +23,8 @@ public:
     // constructor reads and builds the shader
     Shader(const char* vertexPath, const char* fragmentPath, ShaderProps* shaderProps) {
         
-        this->shaderProps = shaderProps;
+     //   if(shaderProps != nullptr)
+           // this->shaderProps = std::make_shared<ShaderProps>(shaderProps);
         // 1. retrieve the vertex/fragment source code from filePath
         std::string vertexCode;
         std::string fragmentCode;
@@ -98,6 +100,10 @@ public:
         glDeleteShader(vertex);
         glDeleteShader(fragment);
     }
+    void initializeShaderProps(ShaderProps* props) {
+        shaderProps = props;
+        
+    }
     void setShaderProps(glm::mat4& model, glm::mat4& view, glm::mat4& projection, glm::vec3& cameraPos) {
         use();
 
@@ -108,13 +114,14 @@ public:
         setVec3("dirLight.specular", *shaderProps->dirLightProps->specular);
         setVec3("dirLight.diffuse", *shaderProps->dirLightProps->diffuse);
 
-        setVec3("pointLight.ambient", *shaderProps->pointLightProps[0].ambient);
-        setVec3("pointLight.specular", *shaderProps->pointLightProps[0].specular);
-        setVec3("pointLight.diffuse", *shaderProps->pointLightProps[0].diffuse);
+        setVec3("pointLight.position", shaderProps->pointLightProps->position);
+        setVec3("pointLight.ambient", shaderProps->pointLightProps->ambient);
+        setVec3("pointLight.specular", shaderProps->pointLightProps->specular);
+        setVec3("pointLight.diffuse", shaderProps->pointLightProps->diffuse);
 
-        setFloat("pointLight.constant", *(shaderProps->pointLightProps[0].constant));
-        setFloat("pointLight.linear", *shaderProps->pointLightProps[0].linear);
-        setFloat("pointLight.quadratic", *shaderProps->pointLightProps[0].quadratic);
+        setFloat("pointLight.constant", shaderProps->pointLightProps->constant);
+        setFloat("pointLight.linear", shaderProps->pointLightProps->linear);
+        setFloat("pointLight.quadratic", shaderProps->pointLightProps->quadratic);
 
         setVec3("viewPos", cameraPos);
         setMat4("view", view);

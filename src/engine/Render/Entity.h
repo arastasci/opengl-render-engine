@@ -4,29 +4,32 @@
 #include "engine/Model.h"
 #include "engine/Animation/Animator.h"
 #include <glm/gtx/quaternion.hpp>
+#include <memory>
 namespace Engine {
-	class RenderObject {
+	class Entity {
 	public:
-		RenderObject(Transform& t, Model& m, Shader* s, Animator* a);
-		RenderObject(Model& m, Shader* s, Animator* a);
-		RenderObject(Model& m, Shader* s, Animator* a, PointLight* pointLight);
-		void Draw(glm::mat4& projectionMatrix, glm::mat4& viewMatrix, glm::vec3& cameraPosition);
-		void SetParent(RenderObject* parent);
-		void SetChild(RenderObject* child);
+		Entity(Transform& t, Model& m, Shader* s, Animator* a);
+		Entity(Model& m, Shader* s, Animator* a);
+		//Entity(Model& m, Shader* s, Animator* a, PointLight&& pointLight);
+		void Draw(glm::mat4& projectionMatrix, glm::mat4& viewMatrix, glm::vec3& cameraPosition) const;
+		void SetParent(Entity* parent);
+		void SetChild(Entity* child);
 		void SetShader(Shader* shader);
 		void SetId(int32_t id);
-		void SetPointLight(PointLight* light);
+		void AddPointLight(PointLight* light);
+		void UpdatePointLight();
+		PointLight* GetPointLight() const;
 		// Transform& GetTransform();
-		
+		void UpdateAnimation(float& dT);
 		Transform transform;
-
+		bool isAnimated;
 	private:
 		void SetParentWithId(int32_t parent);
 		void SetChildWithId(int32_t child);
 
 
 
-		bool isAnimated;
+		
 		Animator* animator;
 		Model model;
 		Shader* shader;

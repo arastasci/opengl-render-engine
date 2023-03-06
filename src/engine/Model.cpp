@@ -11,7 +11,7 @@ Model::Model(std::string path)
 }
 
 
-void Model::Draw(Shader& shader)  
+void Model::Draw(Shader& shader) const
 {
     for (unsigned int i = 0; i < meshes.size(); i++)
         meshes[i].Draw(shader);

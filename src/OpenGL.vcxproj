@@ -136,7 +136,7 @@
   <ItemGroup>
     <ClCompile Include="engine\Animation\Animator.cpp" />
     <ClCompile Include="engine\Render\Renderer.cpp" />
-    <ClCompile Include="engine\Render\RenderObject.cpp" />
+    <ClCompile Include="engine\Render\Entity.cpp" />
     <ClCompile Include="engine\Render\Scene.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -157,7 +157,7 @@
     <ClInclude Include="engine\utils\AssimpGLMHelpers.h" />
     <ClInclude Include="engine\Animation\Bone.h" />
     <ClInclude Include="engine\Render\camera.h" />
-    <ClInclude Include="engine\Render\RenderObject.h" />
+    <ClInclude Include="engine\Render\Entity.h" />
     <ClInclude Include="engine\Input.h" />
     <ClInclude Include="engine\ShaderProps.h" />
     <ClInclude Include="engine\Transform.h" />

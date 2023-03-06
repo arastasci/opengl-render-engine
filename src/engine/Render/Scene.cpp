@@ -1,25 +1,31 @@
 #include "Scene.h"
 namespace Engine {
-	/*int Scene::CreateRenderObject(Model& m, Shader* s, Animator* a, ShaderProps* props) {
-		RenderObject renderObject(m, s, a, props);
-		return AddRenderObjectToScene(&renderObject);
-	}*/
-	int Scene::CreateRenderObjectWithParent(RenderObject* parent, Model& m, Shader* s, Animator* a) {
-		RenderObject renderObject(m, s, a);
+	
+	int Scene::CreateEntityWithParent(Entity* parent, Model& m, Shader* s, Animator* a) {
+		Entity renderObject(m, s, a);
 		renderObject.SetParent(parent);
-		return AddRenderObjectToScene(&renderObject);
+		return AddEntityToScene(&renderObject);
 	}
-	RenderObject* Scene::CreateRenderObject(Model& m, Shader* s, Animator* a) {
-		RenderObject renderObject(m, s, a);
-		AddRenderObjectToScene(&renderObject);
-		return &renderObject;
+	Entity* Scene::CreateEntity(Model& m, Shader* s, Animator* a) {
+		Entity* renderObject = new Entity(m, s, a);
+		AddEntityToScene(renderObject);
+		return renderObject;
 	}
-	int Scene::AddRenderObjectToScene(RenderObject* renderObject) {
-		renderObjectMap.insert({ nextId, *renderObject });
+	int Scene::AddEntityToScene(Entity* renderObject) {
+		entityMap.insert({ nextId, renderObject });
 		renderObject->SetId(nextId);
 		return nextId++;
 	}
-	std::map<int32_t, RenderObject>* Scene::GetObjectMap() {
-		return &renderObjectMap;
+	void Scene::UpdateAnimations(float& deltaTime)
+	{
+		for (auto& entityPair : *(GetEntityMap())) {
+			
+			auto& entity = entityPair.second;
+			if (entity->isAnimated)
+				entity->UpdateAnimation(deltaTime);
+		}
+	}
+	std::map<int32_t, Entity*>* Scene::GetEntityMap() {
+		return &entityMap;
 	}
 }
