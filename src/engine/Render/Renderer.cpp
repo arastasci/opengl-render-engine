@@ -17,6 +17,8 @@ using namespace Engine;
 		projectionMatrix = glm::perspective(glm::radians(Camera::Get().Zoom),
 			static_cast<float>(window->GetScrWidth()) / static_cast<float>(window->GetScrHeight()), 0.1f, 100.0f);
 	}
+
+	
 	void Renderer::RenderEntities() {
 		SetViewMatrix();
 		SetProjectionMatrix();

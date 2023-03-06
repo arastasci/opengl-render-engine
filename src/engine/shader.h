@@ -114,7 +114,7 @@ public:
         setVec3("dirLight.specular", *shaderProps->dirLightProps->specular);
         setVec3("dirLight.diffuse", *shaderProps->dirLightProps->diffuse);
 
-        setVec3("pointLight.position", shaderProps->pointLightProps->position);
+        setVec3("pointLight.position", *shaderProps->pointLightProps->position);
         setVec3("pointLight.ambient", shaderProps->pointLightProps->ambient);
         setVec3("pointLight.specular", shaderProps->pointLightProps->specular);
         setVec3("pointLight.diffuse", shaderProps->pointLightProps->diffuse);

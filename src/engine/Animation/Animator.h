@@ -5,13 +5,14 @@ class Animator
 {
 public:
     Animator(Animation* Animation);
+    Animator() = default;
     void UpdateAnimation(float dt);
 
     void PlayAnimation(Animation* pAnimation);
 
     void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
    
-    std::vector<glm::mat4> GetFinalBoneMatrices();
+    std::vector<glm::mat4> GetFinalBoneMatrices() const;
 
 private:
     std::vector<glm::mat4> m_FinalBoneMatrices;

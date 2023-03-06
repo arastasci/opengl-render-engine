@@ -105,29 +105,22 @@ int main() {
 	float pointLightConstant = 1.f;
 #pragma endregion
 
-	// pointLight in entity, globalLight referencing that pointLight through entity
-	Model lampModel("../src/lightbulb/Bombilla.obj");
-	Model boss("../src/defeated/Defeated.dae");
+
 	Assimp::DefaultLogger::kill();
 
 	DirLight dirLight(&directionalLightDirection,&directionalLightAmbient, &directionalLightDiffuse, &directionalLightSpecular);
 	Shader lampShader("../src/shaders/lampShader_v.glsl", "../src/shaders/lampShader_f.glsl", nullptr);
 
-	Entity* lampObject = scene.CreateEntity(lampModel, &lampShader, nullptr);
-	PointLight pl(pointLightAmbient,
-		pointLightDiffuse, pointLightSpecular, pointLightConstant, pointLightLinear, pointLightQuadratic);
-	//std::shared_ptr<PointLight> plPtr = std::make_shared<PointLight>(pl);
-	ShaderProps*  globalLightProps = new ShaderProps(&dirLight, &pl, 32.f);
+	Entity* lampObject = scene.CreateEntity("../src/lightbulb/Bombilla.obj");
+	lampObject->AddPointLight(PointLight(pointLightAmbient,
+		pointLightDiffuse, pointLightSpecular, pointLightConstant, pointLightLinear, pointLightQuadratic));
+	ShaderProps*  globalLightProps = new ShaderProps(&dirLight, lampObject->GetPointLight(), 32.f);
 
-	lampObject->AddPointLight(&pl);
 	lampShader.initializeShaderProps(globalLightProps);
-
+	lampObject->SetShader(&lampShader);
 	Shader lightingShader("../src/shaders/model_loading_v.glsl", "../src/shaders/model_loading_f.glsl", nullptr);
 	lightingShader.initializeShaderProps(globalLightProps);
-
-	Animation bossAnimation("../src/defeated/Defeated.dae", &boss);
-	Animator animator(&bossAnimation);
-	scene.CreateEntity(boss, &lightingShader, &animator);
+	scene.CreateEntity("../src/defeated/Defeated.dae", "../src/defeated/Defeated.dae" , &lightingShader);
 
 
 	
@@ -169,10 +162,10 @@ int main() {
 		//ImGui::BeginCombo("Directional Light", "dirLight");
 		ImGui::Text("Directional Light");
 
-		ImGui::SliderFloat3("Direction", &directionalLightDirection.x, -1.f, 1.f);
-		ImGui::ColorEdit3("Ambient", &directionalLightAmbient.x);
-		ImGui::ColorEdit3("Diffuse", &directionalLightDiffuse.x);
-		ImGui::ColorEdit3("Specular", &directionalLightSpecular.x);
+		ImGui::SliderFloat3("Direction", &globalLightProps->dirLightProps->direction->x, -1.f, 1.f);
+		ImGui::ColorEdit3("Ambient", &globalLightProps->dirLightProps->ambient->x);
+		ImGui::ColorEdit3("Diffuse", &globalLightProps->dirLightProps->diffuse->x);
+		ImGui::ColorEdit3("Specular", &globalLightProps->dirLightProps->specular->x);
 		ImGui::BeginChild("Point Light");
 		ImGui::Text("Point Light");
 		if (ImGui::Button("Move Light Caster Around")) {
@@ -181,14 +174,14 @@ int main() {
 		if (canMoveLightCube) {
 			ImGui::SliderFloat("Radius", &radius, 1.25f, 2.f);
 			ImGui::BeginDisabled();
-			ImGui::SliderFloat3("Position", &lampObject->transform.translation.x, -2.f, 2.f);
+			ImGui::SliderFloat3("Position", &lampObject->transform.translation->x, -2.f, 2.f);
 			ImGui::EndDisabled();
 		}
 		else {
 			ImGui::BeginDisabled();
 			ImGui::SliderFloat("Radius", &radius, 1.25f, 2.f);
 			ImGui::EndDisabled();
-			ImGui::SliderFloat3("Position", &lampObject->transform.translation.x, -2.f, 2.f);
+			ImGui::SliderFloat3("Position", &lampObject->transform.translation->x, -2.f, 2.f);
 		}
 
 		ImGui::ColorEdit3("Ambient", &globalLightProps->pointLightProps->ambient.x);
@@ -202,7 +195,7 @@ int main() {
 		ImGui::End();
 
 		if (canMoveLightCube) moveLightCube(lightPos, radius, theta, phi);
-		lampObject->UpdatePointLight();
+	//	lampObject->UpdatePointLight();
 		renderer.RenderEntities();
 
 

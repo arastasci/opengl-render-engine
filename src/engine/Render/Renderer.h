@@ -16,7 +16,10 @@ namespace Engine {
 		Renderer(std::shared_ptr<Window> window, Scene* scene);
 
 		void SetToPolygonMode();
-	
+
+		/*
+		* Sets the view and projection matrices and then draws all of the entities in the scene.
+		*/
 		void RenderEntities();
 	private:
 		glm::mat4 projectionMatrix;

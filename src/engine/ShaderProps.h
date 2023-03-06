@@ -16,7 +16,7 @@ struct DirLight {
 };
 struct PointLight {
 public:
-	glm::vec3 position;
+	glm::vec3* position;
 
 	glm::vec3 ambient;
 	glm::vec3 diffuse;
@@ -28,9 +28,7 @@ public:
 	//PointLight(PointLight&& pl) = default;
 	PointLight() = default;
 	PointLight(glm::vec3 amb, glm::vec3 diff, glm::vec3 spec, float constant, float lin, float quadr)
-		
 	{
-		position = glm::vec3(0.f);
 		ambient = amb, diffuse = diff,
 		specular = spec, this->constant= constant, linear = lin, quadratic = quadr;
 	}
