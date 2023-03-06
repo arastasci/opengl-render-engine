@@ -1,7 +1,7 @@
 #pragma once
 #include "engine/Transform.h"
-#include "engine/ShaderProps.h"
-#include "engine/Model.h"
+#include "engine/Render/ShaderProps.h"
+#include "engine/Model/Model.h"
 #include "engine/Animation/Animator.h"
 #include <glm/gtx/quaternion.hpp>
 #include <memory>

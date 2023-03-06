@@ -5,7 +5,7 @@
 #include <vector>
 #include "Mesh.h"
 #include <map>
-#include "ShaderProps.h"
+#include "engine/Render/ShaderProps.h"
 
 #define MAX_BONE_WEIGHTS 4
 struct BoneInfo {

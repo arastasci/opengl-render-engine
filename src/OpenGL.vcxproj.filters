@@ -48,10 +48,10 @@
     <ClCompile Include="engine\Render\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Mesh.cpp">
+    <ClCompile Include="engine\Model\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Model.cpp">
+    <ClCompile Include="engine\Model\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="engine\Render\Renderer.cpp">
@@ -95,13 +95,13 @@
     <ClInclude Include="engine\Render\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Input.h">
+    <ClInclude Include="engine\Core\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\Core\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\ShaderProps.h">
+    <ClInclude Include="engine\Render\ShaderProps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\Animation\Animation.h">
@@ -122,13 +122,13 @@
     <ClInclude Include="engine\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Mesh.h">
+    <ClInclude Include="engine\Model\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Model.h">
+    <ClInclude Include="engine\Model\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\shader.h">
+    <ClInclude Include="engine\Render\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\utils\stb_image.h">

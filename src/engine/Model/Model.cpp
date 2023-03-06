@@ -1,6 +1,6 @@
 #include "Model.h"
-#include "utils/stb_image.h"
-#include "utils/AssimpGLMHelpers.h"
+#include "engine/utils/stb_image.h"
+#include "engine/utils/AssimpGLMHelpers.h"
 
 
 unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);

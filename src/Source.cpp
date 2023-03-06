@@ -4,23 +4,29 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "engine/shader.h"
+
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <assimp/Importer.hpp>
-#include "engine/Render/camera.h"
 
-#include "engine/Model.h"
+
+#include <assimp/Importer.hpp>
+
 #include <assimp/Logger.hpp>
 #include <assimp/DefaultLogger.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "engine/utils/stb_image.h"
+
+#include "engine/Render/shader.h"
+#include "engine/Render/camera.h"
+#include "engine/Render/ShaderProps.h"
 #include "engine/Render/Renderer.h"
+
+#include "engine/utils/stb_image.h"
+
 #include "engine/Core/Window.h"
-#include "engine/Input.h"
-#include "engine/ShaderProps.h"
+#include "engine/Core/Input.h"
 
 #include "engine/Animation/Animation.h"
 #include "engine/Animation/Animator.h"

@@ -1,12 +1,12 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "shader.h"
+#include "engine/Render/shader.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <assimp/scene.h>
-#include "ShaderProps.h"
+#include "engine/Render/ShaderProps.h"
 #define MAX_BONE_INFLUENCE 4
 
 struct Texture {

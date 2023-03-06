@@ -146,8 +146,8 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="engine\Mesh.cpp" />
-    <ClCompile Include="engine\Model.cpp" />
+    <ClCompile Include="engine\Model\Mesh.cpp" />
+    <ClCompile Include="engine\Model\Model.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -158,8 +158,8 @@
     <ClInclude Include="engine\Animation\Bone.h" />
     <ClInclude Include="engine\Render\camera.h" />
     <ClInclude Include="engine\Render\Entity.h" />
-    <ClInclude Include="engine\Input.h" />
-    <ClInclude Include="engine\ShaderProps.h" />
+    <ClInclude Include="engine\Core\Input.h" />
+    <ClInclude Include="engine\Render\ShaderProps.h" />
     <ClInclude Include="engine\Transform.h" />
     <ClInclude Include="engine\Core\Window.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -171,10 +171,10 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
-    <ClInclude Include="engine\Mesh.h" />
-    <ClInclude Include="engine\Model.h" />
+    <ClInclude Include="engine\Model\Mesh.h" />
+    <ClInclude Include="engine\Model\Model.h" />
     <ClInclude Include="engine\Render\Renderer.h" />
-    <ClInclude Include="engine\shader.h" />
+    <ClInclude Include="engine\Render\shader.h" />
     <ClInclude Include="engine\utils\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
