@@ -5,7 +5,8 @@
 
 
 
-
+# 3d model files directory
+models/
 # 3d model files
 *.obj
 *.mtl

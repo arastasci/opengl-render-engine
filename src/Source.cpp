@@ -28,8 +28,6 @@
 #include "engine/Core/Window.h"
 #include "engine/Core/Input.h"
 
-#include "engine/Animation/Animation.h"
-#include "engine/Animation/Animator.h"
 
 using namespace Engine;
 void moveLightCube(glm::vec3 &lightPos, float& radius, float& theta, float& phi);
@@ -94,7 +92,7 @@ int main() {
 
 	
 
-#pragma region Light Caster Variable Initiation
+#pragma region Light Caster Values Initiation
 	glm::vec3 lightPos(0.f);
 	glm::vec3 offset(0.f, 0.5f, 0.f);
 
@@ -117,7 +115,7 @@ int main() {
 	DirLight dirLight(&directionalLightDirection,&directionalLightAmbient, &directionalLightDiffuse, &directionalLightSpecular);
 	Shader lampShader("../src/shaders/lampShader_v.glsl", "../src/shaders/lampShader_f.glsl", nullptr);
 
-	Entity* lampObject = scene.CreateEntity("../src/lightbulb/Bombilla.obj");
+	Entity* lampObject = scene.CreateEntity("../models/lightbulb/Bombilla.obj");
 	lampObject->AddPointLight(PointLight(pointLightAmbient,
 		pointLightDiffuse, pointLightSpecular, pointLightConstant, pointLightLinear, pointLightQuadratic));
 	ShaderProps*  globalLightProps = new ShaderProps(&dirLight, lampObject->GetPointLight(), 32.f);
@@ -126,10 +124,8 @@ int main() {
 	lampObject->SetShader(&lampShader);
 	Shader lightingShader("../src/shaders/model_loading_v.glsl", "../src/shaders/model_loading_f.glsl", nullptr);
 	lightingShader.initializeShaderProps(globalLightProps);
-	scene.CreateEntity("../src/defeated/Defeated.dae", "../src/defeated/Defeated.dae" , &lightingShader);
+	scene.CreateEntity("../models/defeated/Defeated.dae", "../models/defeated/Defeated.dae" , &lightingShader);
 
-
-	
 	bool canMoveLightCube = false;
 	
 

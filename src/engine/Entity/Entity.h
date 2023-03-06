@@ -1,8 +1,8 @@
 #pragma once
-#include "engine/Transform.h"
+#include "Transform.h"
 #include "engine/Render/ShaderProps.h"
-#include "engine/Model/Model.h"
-#include "engine/Animation/Animator.h"
+#include "Model/Model.h"
+#include "Animation/Animator.h"
 #include <glm/gtx/quaternion.hpp>
 #include <memory>
 namespace Engine {

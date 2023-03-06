@@ -42,16 +42,16 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Animation\Animator.cpp">
+    <ClCompile Include="engine\Entity\Animation\Animator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Render\Entity.cpp">
+    <ClCompile Include="engine\Entity\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Model\Mesh.cpp">
+    <ClCompile Include="engine\Entity\Model\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Model\Model.cpp">
+    <ClCompile Include="engine\Entity\Model\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="engine\Render\Renderer.cpp">
@@ -104,34 +104,34 @@
     <ClInclude Include="engine\Render\ShaderProps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Animation\Animation.h">
+    <ClInclude Include="engine\Entity\Animation\Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Animation\Animator.h">
+    <ClInclude Include="engine\Entity\Animation\Animator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\utils\AssimpGLMHelpers.h">
+    <ClInclude Include="engine\Utils\AssimpGLMHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Animation\Bone.h">
+    <ClInclude Include="engine\Entity\Animation\Bone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Render\Entity.h">
+    <ClInclude Include="engine\Entity\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Transform.h">
+    <ClInclude Include="engine\Entity\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Model\Mesh.h">
+    <ClInclude Include="engine\Entity\Model\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Model\Model.h">
+    <ClInclude Include="engine\Entity\Model\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\Render\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\utils\stb_image.h">
+    <ClInclude Include="engine\Utils\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\Render\Scene.h">

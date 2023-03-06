@@ -13,6 +13,7 @@ struct DirLight {
 	DirLight(glm::vec3* dir, glm::vec3* amb, glm::vec3* diff, glm::vec3* spec)
 		: direction(dir), ambient(amb), diffuse(diff), specular(spec) {
 	}
+	~DirLight() = default;
 };
 struct PointLight {
 public:
@@ -32,6 +33,7 @@ public:
 		ambient = amb, diffuse = diff,
 		specular = spec, this->constant= constant, linear = lin, quadratic = quadr;
 	}
+	~PointLight() = default;
 };
 struct ShaderProps {
 public:

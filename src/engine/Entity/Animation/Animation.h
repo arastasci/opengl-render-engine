@@ -6,7 +6,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "engine/utils/AssimpGLMHelpers.h"
-#include "engine/Model/Model.h"
+#include "engine/Entity/Model/Model.h"
 struct AssimpNodeData
 {
     glm::mat4 transformation;

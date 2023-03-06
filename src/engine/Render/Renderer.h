@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include "Entity.h"
+#include "engine/Entity/Entity.h"
 #include "engine/Core/Window.h"
 #include "camera.h"
 #include "Scene.h"

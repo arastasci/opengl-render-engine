@@ -134,9 +134,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="engine\Animation\Animator.cpp" />
+    <ClCompile Include="engine\Entity\Animation\Animator.cpp" />
     <ClCompile Include="engine\Render\Renderer.cpp" />
-    <ClCompile Include="engine\Render\Entity.cpp" />
+    <ClCompile Include="engine\Entity\Entity.cpp" />
     <ClCompile Include="engine\Render\Scene.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -146,21 +146,21 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="engine\Model\Mesh.cpp" />
-    <ClCompile Include="engine\Model\Model.cpp" />
+    <ClCompile Include="engine\Entity\Model\Mesh.cpp" />
+    <ClCompile Include="engine\Entity\Model\Model.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine\Animation\Animation.h" />
-    <ClInclude Include="engine\Animation\Animator.h" />
+    <ClInclude Include="engine\Entity\Animation\Animation.h" />
+    <ClInclude Include="engine\Entity\Animation\Animator.h" />
     <ClInclude Include="engine\Render\Scene.h" />
-    <ClInclude Include="engine\utils\AssimpGLMHelpers.h" />
-    <ClInclude Include="engine\Animation\Bone.h" />
+    <ClInclude Include="engine\Utils\AssimpGLMHelpers.h" />
+    <ClInclude Include="engine\Entity\Animation\Bone.h" />
     <ClInclude Include="engine\Render\camera.h" />
-    <ClInclude Include="engine\Render\Entity.h" />
+    <ClInclude Include="engine\Entity\Entity.h" />
     <ClInclude Include="engine\Core\Input.h" />
     <ClInclude Include="engine\Render\ShaderProps.h" />
-    <ClInclude Include="engine\Transform.h" />
+    <ClInclude Include="engine\Entity\Transform.h" />
     <ClInclude Include="engine\Core\Window.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -171,11 +171,11 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
-    <ClInclude Include="engine\Model\Mesh.h" />
-    <ClInclude Include="engine\Model\Model.h" />
+    <ClInclude Include="engine\Entity\Model\Mesh.h" />
+    <ClInclude Include="engine\Entity\Model\Model.h" />
     <ClInclude Include="engine\Render\Renderer.h" />
     <ClInclude Include="engine\Render\shader.h" />
-    <ClInclude Include="engine\utils\stb_image.h" />
+    <ClInclude Include="engine\Utils\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\lampShader_f.glsl" />
