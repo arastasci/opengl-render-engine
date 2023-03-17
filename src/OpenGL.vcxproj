@@ -148,7 +148,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="engine\Entity\Model\Mesh.cpp" />
     <ClCompile Include="engine\Entity\Model\Model.cpp" />
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Entity\Animation\Animation.h" />

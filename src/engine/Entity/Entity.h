@@ -8,8 +8,19 @@
 namespace Engine {
 	class Entity {
 	public:
+
+		Transform transform;
+		bool isAnimated;
+
 		Entity(Transform& t, Model& m, Shader* s, Animator* a);
+		
+		Entity(glm::vec3 position, glm::vec3 rotation, 
+			std::string& modelPath, std::string& animationPath, Shader* shader = nullptr);
+		
 		Entity(Model& m, Shader* s, Animator* a);
+		
+		~Entity(); 
+		
 		Entity(std::string& modelPath, std::string& animationPath, Shader* shader = nullptr);
 
 		/*
@@ -36,12 +47,24 @@ namespace Engine {
 		* Adds a point light caster to this entity that can later be embedded to a shader.
 		*/
 		void AddPointLight(PointLight&& light);
+		
 		PointLight* GetPointLight() const;
-		// Transform& GetTransform();
+		
 		void UpdateAnimation(float& dT);
-		Transform transform;
-		bool isAnimated;
 	private:
+
+		Model model;
+		Shader* shader;
+		PointLight* pointLight;
+
+		std::unique_ptr<Animation> animation;
+		std::unique_ptr<Animator> animator;
+
+		std::vector<int32_t> children;
+		int32_t parent = -1;
+		int32_t id;
+
+
 		/*
 		* This method makes this entity the parent of the entity with provided id.
 		* This method gets called when the latter entity binds itself as the child
@@ -56,14 +79,5 @@ namespace Engine {
 		void SetChildWithId(int32_t child);
 
 
-
-		std::unique_ptr<Animation> animation;
-		std::unique_ptr<Animator> animator;
-		Model model;
-		Shader* shader;
-		std::vector<int32_t> children;
-		int32_t parent = -1;
-		int32_t id;
-		PointLight* pointLight;
 	};
 }
