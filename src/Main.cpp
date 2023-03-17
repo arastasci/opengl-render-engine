@@ -32,18 +32,9 @@
 using namespace Engine;
 void moveLightCube(glm::vec3 &lightPos, float& radius, float& theta, float& phi);
 
-// camera
-//Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-
 float lastFrame = 0.0f;
 
-
 float deltaTime;
-
-
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 
 int main() {
 	
@@ -116,6 +107,7 @@ int main() {
 	Shader lampShader("../src/shaders/lampShader_v.glsl", "../src/shaders/lampShader_f.glsl", nullptr);
 
 	Entity* lampObject = scene.CreateEntity("../models/lightbulb/Bombilla.obj");
+	
 	lampObject->AddPointLight(PointLight(pointLightAmbient,
 		pointLightDiffuse, pointLightSpecular, pointLightConstant, pointLightLinear, pointLightQuadratic));
 	ShaderProps*  globalLightProps = new ShaderProps(&dirLight, lampObject->GetPointLight(), 32.f);
@@ -124,7 +116,7 @@ int main() {
 	lampObject->SetShader(&lampShader);
 	Shader lightingShader("../src/shaders/model_loading_v.glsl", "../src/shaders/model_loading_f.glsl", nullptr);
 	lightingShader.initializeShaderProps(globalLightProps);
-	scene.CreateEntity("../models/defeated/Defeated.dae", "../models/defeated/Defeated.dae" , &lightingShader);
+	scene.CreateEntity("../models/defeated/Defeated.dae", "../models/defeated/Defeated.dae", &lightingShader);
 
 	bool canMoveLightCube = false;
 	
@@ -161,7 +153,6 @@ int main() {
 		ImGui::Begin("Light Casters");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::BeginChild("Directional Light");
-		//ImGui::BeginCombo("Directional Light", "dirLight");
 		ImGui::Text("Directional Light");
 
 		ImGui::SliderFloat3("Direction", &globalLightProps->dirLightProps->direction->x, -1.f, 1.f);
@@ -197,7 +188,7 @@ int main() {
 		ImGui::End();
 
 		if (canMoveLightCube) moveLightCube(lightPos, radius, theta, phi);
-	//	lampObject->UpdatePointLight();
+
 		renderer.RenderEntities();
 
 

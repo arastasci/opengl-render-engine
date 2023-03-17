@@ -6,10 +6,13 @@ namespace Engine {
 	public:
 
 		/*
-		* Creates an Entity and adds it to the entityMap. 
+		* Creates an Entity and adds it to the entityMap.
 		* If not animated put an empty string as parameter for the animationPath.
 		*/
 		Entity* CreateEntity(std::string&& modelPath, std::string&& animationPath = "", Shader* shader = nullptr);
+
+		Entity* CreateEntityWithTransform(glm::vec3 position, glm::vec3 rotation,
+			std::string& modelPath, std::string& animationPath, Shader* shader = nullptr);
 
 		void UpdateAnimations(float& deltaTime);
 		std::map <int32_t, Entity*>* GetEntityMap();
