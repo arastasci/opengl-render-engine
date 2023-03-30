@@ -5,9 +5,15 @@
 
 unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
 
-Model::Model(std::string path)
+Model::Model(const std::string path)
 {
-    loadModel(path);
+    if (modelPool.find(path) == modelPool.end()) {
+        loadModel(path);
+        modelPool.insert({path, *this });
+    }
+    else {
+        *this = modelPool.find(path)->second;
+    }
 }
 
 
