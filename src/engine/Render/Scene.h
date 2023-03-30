@@ -8,7 +8,8 @@ namespace Engine {
 	class Scene {
 	public:
 		ShaderProps* shaderProps;
-		Shader* defaultShader;
+		Shader* lampShader;
+		Shader* modelShader;
 		
 		/*
 		* Creates an Entity and adds it to the entityMap.
@@ -25,7 +26,8 @@ namespace Engine {
 		void UpdateAnimations(float& deltaTime);
 		std::map <int32_t, Entity*>* GetEntityMap();
 		void SetShaderProps(ShaderProps* props);
-		void SetDefaultShader(Shader* shader);
+		void SetModelShader(Shader* shader);
+		void SetLampShader(Shader* shader);
 
 	private:
 		int32_t nextId = 0;

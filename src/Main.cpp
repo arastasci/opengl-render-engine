@@ -31,7 +31,6 @@
 #include "engine/Render/Scene.h"
 #include "engine/Entity/Entity.h"
 using namespace Engine;
-void moveLightCube(glm::vec3 &lightPos, float& radius, float& theta, float& phi);
 
 float lastFrame = 0.0f;
 
@@ -108,19 +107,21 @@ int main() {
 	DirLight dirLight(&directionalLightDirection,&directionalLightAmbient, &directionalLightDiffuse, &directionalLightSpecular);
 	Shader lampShader("../src/shaders/lampShader_v.glsl", "../src/shaders/lampShader_f.glsl", nullptr);
 
-	Entity* lampObject = scene->CreateEntity("../models/lightbulb/Bombilla.obj");
+//	Entity* lampObject = scene->CreateEntity("../models/lightbulb/Bombilla.obj");
 	
 	
 	ShaderProps*  globalLightProps = new ShaderProps(&dirLight, 32.f);
 	scene->SetShaderProps(globalLightProps);
-	scene->AddPointLight(lampObject, PointLight());
+	//scene->AddPointLight(lampObject, PointLight());
 	lampShader.initializeShaderProps(globalLightProps);
-	lampObject->SetShader(&lampShader);
-	scene->SetDefaultShader(&lampShader);
+	//lampObject->SetShader(&lampShader);
+	scene->SetLampShader(&lampShader);
+	
 	Shader lightingShader("../src/shaders/model_loading_v.glsl", "../src/shaders/model_loading_f.glsl", nullptr);
 	lightingShader.initializeShaderProps(globalLightProps);
-	scene->CreateEntity("../models/defeated/Defeated.dae", "../models/defeated/Defeated.dae", &lightingShader);
-
+	scene->SetModelShader(&lightingShader);
+	//Entity* firstBossman = scene->CreateEntity("../models/defeated/Defeated.dae", "../models/defeated/Defeated.dae", &lightingShader);
+	
 	bool canMoveLightCube = false;
 	
 
@@ -131,10 +132,7 @@ int main() {
 		lastFrame = currentFrame;
 		input.UpdateDeltaTime(deltaTime);
 		
-		phi = glfwGetTime() * 50;
-		theta = glfwGetTime() * 20;
-
-
+	
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -155,7 +153,6 @@ int main() {
 
 		
 
-		if (canMoveLightCube) moveLightCube(*lampObject->transform.translation, radius, theta, phi);
 
 		renderer.RenderEntities();
 
@@ -174,9 +171,5 @@ int main() {
 	return 0;
 }
 
-void moveLightCube(glm::vec3& lightPos, float& radius, float& theta, float& phi) {
-	lightPos = glm::vec3(radius * glm::sin(glm::radians(theta)) * glm::cos(glm::radians(phi)),
-		 radius * glm::sin(glm::radians(theta)) * glm::sin(glm::radians(phi)), radius * glm::cos(glm::radians(theta))) ;
 
-}
 

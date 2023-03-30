@@ -24,7 +24,10 @@ void Model::Draw(Shader& shader) const
 }
 
 
-std::map<std::string, BoneInfo>& Model::GetBoneInfoMap() { return m_BoneInfoMap; }
+std::map<std::string, BoneInfo>& Model::GetBoneInfoMap() 
+{ 
+    return m_BoneInfoMap; 
+}
 
 int& Model::GetBoneCount() { return m_BoneCounter; }
 

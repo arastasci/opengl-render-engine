@@ -2,8 +2,10 @@
 namespace Engine {
 
 	Entity* Scene::CreateEntity(std::string&& modelPath, std::string&& animationPath, Shader* shader) {
-		if (shader == nullptr)
-			shader = defaultShader;
+		if (shader == nullptr && modelPath != "../models/defeated/Defeated.dae")
+			shader = lampShader;
+		else
+			shader = modelShader;
 		Entity* renderObject = new Entity(modelPath, animationPath, shader);
 		AddEntityToScene(renderObject);
 		return renderObject;
@@ -54,12 +56,16 @@ namespace Engine {
 	std::map<int32_t, Entity*>* Scene::GetEntityMap() {
 		return &entityMap;
 	}
+
 	void Scene::SetShaderProps(ShaderProps* props)
 	{
 		shaderProps = props;
 	}
 	
-	void Scene::SetDefaultShader(Shader* shader) {
-		defaultShader = shader;
+	void Scene::SetLampShader(Shader* shader) {
+		lampShader = shader;
+	}
+	void Scene::SetModelShader(Shader* shader) {
+		modelShader = shader;
 	}
 }

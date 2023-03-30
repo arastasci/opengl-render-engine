@@ -8,10 +8,10 @@ namespace Engine {
 	public:
 
 		std::vector<Entity*> pointLightEntities;
-
+		std::vector<Entity*> bossmenEntities;
 		ImGuiLayer(Scene* scene);
-		void AddPointLightEntity(Entity* entity);
-
+		void AddPointLightEntity(Entity* e );
+		void AddBossmanEntity(Entity* e);
 		void RenderGUI();
 		Scene* scene;
 

@@ -66,7 +66,10 @@ namespace Engine {
 		glm::mat4 shaderModel = glm::mat4(1.f);
 		shaderModel = glm::translate(shaderModel, *transform.translation);
 		shaderModel = glm::scale(shaderModel, transform.scale);
-		//shaderModel = glm::toMat4(glm::quat(transform.rotation));
+		shaderModel *= glm::toMat4(glm::quat(transform.rotation));
+		shaderModel = glm::rotate(shaderModel, glm::radians(transform.rotation.x), glm::vec3(1.f, 0.f, 0.f));
+		shaderModel = glm::rotate(shaderModel, glm::radians(transform.rotation.y), glm::vec3(0.f, 1.f, 0.f));
+		shaderModel = glm::rotate(shaderModel, glm::radians(transform.rotation.z), glm::vec3(0.f, 0.f, 1.f));
 		shader->setShaderProps(shaderModel, viewMatrix, projectionMatrix, cameraPosition);
 		if (isAnimated) {
 			auto transforms = animator->GetFinalBoneMatrices();
