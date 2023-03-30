@@ -5,23 +5,24 @@
 #include "Animation/Animator.h"
 #include <glm/gtx/quaternion.hpp>
 #include <memory>
+#include "engine/Render/shader.h"
 namespace Engine {
+	void SetDefaultShader(Shader* shader);
 	class Entity {
 	public:
-
 		Transform transform;
 		bool isAnimated;
 
 		Entity(Transform& t, Model& m, Shader* s, Animator* a);
 		
 		Entity(glm::vec3 position, glm::vec3 rotation, 
-			std::string& modelPath, std::string& animationPath, Shader* shader = nullptr);
+			std::string& modelPath, std::string& animationPath, Shader* shader);
 		
 		Entity(Model& m, Shader* s, Animator* a);
 		
 		~Entity(); 
 		
-		Entity(std::string& modelPath, std::string& animationPath, Shader* shader = nullptr);
+		Entity(std::string& modelPath, std::string& animationPath, Shader* shader);
 
 		/*
 		* Gets the MVP matrix and draws the entity to the screen.
@@ -47,12 +48,13 @@ namespace Engine {
 		* Adds a point light caster to this entity that can later be embedded to a shader.
 		*/
 		void AddPointLight(PointLight&& light);
+
 		
 		PointLight* GetPointLight() const;
 		
 		void UpdateAnimation(float& dT);
 	private:
-
+		
 		Model model;
 		Shader* shader;
 		PointLight* pointLight;

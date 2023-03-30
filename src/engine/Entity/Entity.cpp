@@ -48,6 +48,8 @@ namespace Engine {
 		pointLight = new PointLight(light);
 		pointLight->position = transform.translation;
 	}
+	
+
 	PointLight* Entity::GetPointLight() const {
 		return pointLight;
 	}

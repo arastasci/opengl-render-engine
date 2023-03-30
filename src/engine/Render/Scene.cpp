@@ -2,6 +2,8 @@
 namespace Engine {
 
 	Entity* Scene::CreateEntity(std::string&& modelPath, std::string&& animationPath, Shader* shader) {
+		if (shader == nullptr)
+			shader = defaultShader;
 		Entity* renderObject = new Entity(modelPath, animationPath, shader);
 		AddEntityToScene(renderObject);
 		return renderObject;
@@ -14,10 +16,29 @@ namespace Engine {
 		return renderObject;
 	}
 
+	void Scene::AddPointLight(Entity* entity , PointLight&& pointLight)
+	{
+		
+		if (shaderProps->HasPointLightSpace()) {
+			entity->AddPointLight(PointLight(pointLight));
+			layer->AddPointLightEntity(entity);
+			shaderProps->AddPointLight(entity->GetPointLight());
+			
+		}
+		else {
+			std::cout << "Cannot instantiate point light, maximum amount reached" << std::endl;
+		}
+	}
+
 	int Scene::AddEntityToScene(Entity* renderObject) {
 		entityMap.insert({ nextId, renderObject });
 		renderObject->SetId(nextId);
 		return nextId++;
+	}
+
+	void Scene::BindImGuiLayer(ImGuiLayer* layer)
+	{
+		this->layer = layer;
 	}
 
 	void Scene::UpdateAnimations(float& deltaTime)
@@ -32,5 +53,13 @@ namespace Engine {
 
 	std::map<int32_t, Entity*>* Scene::GetEntityMap() {
 		return &entityMap;
+	}
+	void Scene::SetShaderProps(ShaderProps* props)
+	{
+		shaderProps = props;
+	}
+	
+	void Scene::SetDefaultShader(Shader* shader) {
+		defaultShader = shader;
 	}
 }

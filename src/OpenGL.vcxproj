@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="engine\Core\ImguiLayer.cpp" />
     <ClCompile Include="engine\Entity\Animation\Animator.cpp" />
     <ClCompile Include="engine\Render\Renderer.cpp" />
     <ClCompile Include="engine\Entity\Entity.cpp" />
@@ -151,6 +152,7 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="engine\Core\ImguiLayer.h" />
     <ClInclude Include="engine\Entity\Animation\Animation.h" />
     <ClInclude Include="engine\Entity\Animation\Animator.h" />
     <ClInclude Include="engine\Render\Scene.h" />
