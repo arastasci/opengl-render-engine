@@ -31,7 +31,7 @@ public:
 	float constant;
 	float linear;
 	float quadratic;
-
+	int id;
 	PointLight(glm::vec3 amb = glm::vec3(0.3f, 0.3f, 0.3f),
 		glm::vec3 diff = glm::vec3(1.0f), glm::vec3 spec = glm::vec3(1.0f),
 		float constant = 1.f, float lin = 0.7f, float quadr = 1.8f)
@@ -61,8 +61,17 @@ struct ShaderProps {
 	bool HasPointLightSpace() {
 		return MAX_POINTLIGHT_COUNT > plightCount;
 	}
-	void AddPointLight(PointLight* pointLight) {
-		pointLightProps[plightCount++] = pointLight;
+	void AddPointLight(PointLight* pointLight ) {
+		for(int i = 0; i < MAX_POINTLIGHT_COUNT; i++){
+			if(pointLightProps[i] == nullptr){
+				pointLight->id = i;
+				pointLightProps[i] = pointLight;
+				break;
+			}
+		}
+	}
+	void RemovePointLight(int id) {
+		pointLightProps[id] = nullptr;
 	}
 	ShaderProps(const ShaderProps& other) = default;
 };

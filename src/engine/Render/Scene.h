@@ -4,7 +4,6 @@
 #include "engine/Entity/Entity.h"
 #include "engine/Core/ImguiLayer.h"
 namespace Engine {
-	void SetDefaultShader(Shader* shader);
 	class Scene {
 	public:
 		ShaderProps* shaderProps;
@@ -28,7 +27,7 @@ namespace Engine {
 		void SetShaderProps(ShaderProps* props);
 		void SetModelShader(Shader* shader);
 		void SetLampShader(Shader* shader);
-
+		void DeleteEntity(int32_t id);
 	private:
 		int32_t nextId = 0;
 		std::map <int32_t, Entity*> entityMap;

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <map>
 #include "imgui/imgui.h"
 namespace Engine {
 	class Scene;
@@ -7,8 +8,8 @@ namespace Engine {
 	class ImGuiLayer {
 	public:
 
-		std::vector<Entity*> pointLightEntities;
-		std::vector<Entity*> bossmenEntities;
+		std::map<int, Entity*> pointLightEntities;
+		std::map<int, Entity*> bossmenEntities;
 		ImGuiLayer(Scene* scene);
 		void AddPointLightEntity(Entity* e );
 		void AddBossmanEntity(Entity* e);

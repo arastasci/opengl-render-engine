@@ -1,6 +1,6 @@
 #include "Scene.h"
 namespace Engine {
-
+	
 	Entity* Scene::CreateEntity(std::string&& modelPath, std::string&& animationPath, Shader* shader) {
 		if (shader == nullptr && modelPath != "../models/defeated/Defeated.dae")
 			shader = lampShader;
@@ -23,9 +23,9 @@ namespace Engine {
 		
 		if (shaderProps->HasPointLightSpace()) {
 			entity->AddPointLight(PointLight(pointLight));
-			layer->AddPointLightEntity(entity);
 			shaderProps->AddPointLight(entity->GetPointLight());
-			
+			layer->AddPointLightEntity(entity);
+
 		}
 		else {
 			std::cout << "Cannot instantiate point light, maximum amount reached" << std::endl;
@@ -61,7 +61,14 @@ namespace Engine {
 	{
 		shaderProps = props;
 	}
-	
+	void Scene::DeleteEntity(int32_t id) {
+		std::map<int32_t, Entity*>::iterator itr = entityMap.find(id);
+		if (itr != entityMap.end())
+		{
+			delete itr->second;
+			entityMap.erase(itr);
+		}
+	}
 	void Scene::SetLampShader(Shader* shader) {
 		lampShader = shader;
 	}

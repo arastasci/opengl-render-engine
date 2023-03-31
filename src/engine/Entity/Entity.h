@@ -12,7 +12,6 @@ namespace Engine {
 	public:
 		Transform transform;
 		bool isAnimated;
-
 		Entity(Transform& t, Model& m, Shader* s, Animator* a);
 		
 		Entity(glm::vec3 position, glm::vec3 rotation, 
@@ -44,6 +43,7 @@ namespace Engine {
 		* Sets the UUID of this entity.
 		*/
 		void SetId(int32_t id);
+		int32_t GetId();
 		/*
 		* Adds a point light caster to this entity that can later be embedded to a shader.
 		*/

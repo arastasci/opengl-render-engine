@@ -14,9 +14,7 @@ namespace Engine {
 		transform.rotation = rotation;
 	}
 
-	Entity::~Entity() {
-		delete& animation;
-	}
+	Entity::~Entity() = default;
 
 	Entity::Entity(std::string& modelPath, std::string& animationPath, Shader* shader)
 		: model(modelPath), shader(shader) {
@@ -43,6 +41,10 @@ namespace Engine {
 	void Entity::SetId(int32_t id) {
 		this->id = id;
 	}
+	int32_t Entity::GetId() {
+		return id;
+	}
+	
 	void Entity::AddPointLight(PointLight&& light)
 	{
 		pointLight = new PointLight(light);
