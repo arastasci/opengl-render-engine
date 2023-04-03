@@ -113,15 +113,33 @@ public:
         setVec3("dirLight.ambient", *shaderProps->dirLightProps->ambient);
         setVec3("dirLight.specular", *shaderProps->dirLightProps->specular);
         setVec3("dirLight.diffuse", *shaderProps->dirLightProps->diffuse);
+        for (int i = 0; i < MAX_POINTLIGHT_COUNT; i++) {
+            if (shaderProps->pointLightProps[i] == nullptr) continue;
+            char buf[100];
+            sprintf_s(buf, "pointLight[%i].init", i);
+            setBool(buf, true);
+            sprintf_s(buf, "pointLight[%i].position", i);            
+            setVec3(buf, *shaderProps->pointLightProps[i]->position);
 
-        setVec3("pointLight.position", *shaderProps->pointLightProps->position);
-        setVec3("pointLight.ambient", shaderProps->pointLightProps->ambient);
-        setVec3("pointLight.specular", shaderProps->pointLightProps->specular);
-        setVec3("pointLight.diffuse", shaderProps->pointLightProps->diffuse);
+            sprintf_s(buf, "pointLight[%i].ambient", i);
+            setVec3(buf, shaderProps->pointLightProps[i]->ambient);
 
-        setFloat("pointLight.constant", shaderProps->pointLightProps->constant);
-        setFloat("pointLight.linear", shaderProps->pointLightProps->linear);
-        setFloat("pointLight.quadratic", shaderProps->pointLightProps->quadratic);
+            sprintf_s(buf, "pointLight[%i].specular", i);
+            setVec3(buf, shaderProps->pointLightProps[i]->specular);
+
+            sprintf_s(buf, "pointLight[%i].diffuse", i);
+            setVec3(buf, shaderProps->pointLightProps[i]->diffuse);
+
+            sprintf_s(buf, "pointLight[%i].constant", i);
+            setFloat(buf, shaderProps->pointLightProps[i]->constant);
+
+            sprintf_s(buf, "pointLight[%i].linear", i);
+            setFloat(buf, shaderProps->pointLightProps[i]->linear);
+
+            sprintf_s(buf, "pointLight[%i].quadratic", i);
+            setFloat(buf, shaderProps->pointLightProps[i]->quadratic);
+        }
+       
 
         setVec3("viewPos", cameraPos);
         setMat4("view", view);

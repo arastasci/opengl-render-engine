@@ -5,9 +5,15 @@
 
 unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
 
-Model::Model(std::string path)
+Model::Model(const std::string path)
 {
-    loadModel(path);
+    if (modelPool.find(path) == modelPool.end()) {
+        loadModel(path);
+        modelPool.insert({path, *this });
+    }
+    else {
+        *this = modelPool.find(path)->second;
+    }
 }
 
 
@@ -18,7 +24,10 @@ void Model::Draw(Shader& shader) const
 }
 
 
-std::map<std::string, BoneInfo>& Model::GetBoneInfoMap() { return m_BoneInfoMap; }
+std::map<std::string, BoneInfo>& Model::GetBoneInfoMap() 
+{ 
+    return m_BoneInfoMap; 
+}
 
 int& Model::GetBoneCount() { return m_BoneCounter; }
 

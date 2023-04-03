@@ -1,7 +1,11 @@
 #include "Scene.h"
 namespace Engine {
-
+	
 	Entity* Scene::CreateEntity(std::string&& modelPath, std::string&& animationPath, Shader* shader) {
+		if (shader == nullptr && modelPath != "../models/defeated/Defeated.dae")
+			shader = lampShader;
+		else
+			shader = modelShader;
 		Entity* renderObject = new Entity(modelPath, animationPath, shader);
 		AddEntityToScene(renderObject);
 		return renderObject;
@@ -14,10 +18,29 @@ namespace Engine {
 		return renderObject;
 	}
 
+	void Scene::AddPointLight(Entity* entity , PointLight&& pointLight)
+	{
+		
+		if (shaderProps->HasPointLightSpace()) {
+			entity->AddPointLight(PointLight(pointLight));
+			shaderProps->AddPointLight(entity->GetPointLight());
+			layer->AddPointLightEntity(entity);
+
+		}
+		else {
+			std::cout << "Cannot instantiate point light, maximum amount reached" << std::endl;
+		}
+	}
+
 	int Scene::AddEntityToScene(Entity* renderObject) {
 		entityMap.insert({ nextId, renderObject });
 		renderObject->SetId(nextId);
 		return nextId++;
+	}
+
+	void Scene::BindImGuiLayer(ImGuiLayer* layer)
+	{
+		this->layer = layer;
 	}
 
 	void Scene::UpdateAnimations(float& deltaTime)
@@ -32,5 +55,24 @@ namespace Engine {
 
 	std::map<int32_t, Entity*>* Scene::GetEntityMap() {
 		return &entityMap;
+	}
+
+	void Scene::SetShaderProps(ShaderProps* props)
+	{
+		shaderProps = props;
+	}
+	void Scene::DeleteEntity(int32_t id) {
+		std::map<int32_t, Entity*>::iterator itr = entityMap.find(id);
+		if (itr != entityMap.end())
+		{
+			delete itr->second;
+			entityMap.erase(itr);
+		}
+	}
+	void Scene::SetLampShader(Shader* shader) {
+		lampShader = shader;
+	}
+	void Scene::SetModelShader(Shader* shader) {
+		modelShader = shader;
 	}
 }

@@ -16,9 +16,9 @@ struct BoneInfo {
 class Model
 {
 public:
+    inline static std::map<std::string, Model> modelPool;
     Model(std::string path);
     void Draw(Shader& shader) const;
-
     std::map<std::string, BoneInfo>& GetBoneInfoMap();
     int& GetBoneCount();
 
@@ -30,7 +30,7 @@ private:
     std::vector<Mesh> meshes;
     std::string directory;
     std::vector<Texture> textures_loaded;
-
+    
 
     void loadModel(std::string path);
     void processNode(aiNode* node, const aiScene* scene);

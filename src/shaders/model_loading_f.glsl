@@ -13,6 +13,7 @@ struct DirLight {
     vec3 specular;
 };
 struct PointLight{
+	bool init;
 	vec3 position;
 
 	vec3 ambient;
@@ -28,10 +29,11 @@ struct Material{
     sampler2D texture_specular1;    
     float shininess;
 };
+const int MAX_POINTLIGHT_COUNT = 8;
 
 
 uniform DirLight dirLight;
-uniform PointLight pointLight;
+uniform PointLight pointLight[MAX_POINTLIGHT_COUNT];
 uniform Material material;
 uniform vec3 viewPos;
 
@@ -44,7 +46,12 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 result;
 	result += CalcDirLight(dirLight, norm, viewDir);
-	result += CalcPointLight(pointLight, norm, FragPos, viewDir);
+	for(int i = 0; i < MAX_POINTLIGHT_COUNT; i++){
+		if(!pointLight[i].init) continue;	
+		
+		result += CalcPointLight(pointLight[i], norm, FragPos, viewDir);
+
+	}
     FragColor = vec4(result, 1.0);
 }
 
@@ -64,6 +71,7 @@ void main()
 
  }
  vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
+    
 	vec3 lightDir = normalize(light.position - fragPos);
 	
 	float diff = max(dot(normal, lightDir), 0.0);

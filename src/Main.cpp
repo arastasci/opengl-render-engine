@@ -27,10 +27,10 @@
 
 #include "engine/Core/Window.h"
 #include "engine/Core/Input.h"
-
-
+#include "engine/Core/ImguiLayer.h"
+#include "engine/Render/Scene.h"
+#include "engine/Entity/Entity.h"
 using namespace Engine;
-void moveLightCube(glm::vec3 &lightPos, float& radius, float& theta, float& phi);
 
 float lastFrame = 0.0f;
 
@@ -40,8 +40,8 @@ int main() {
 	
 	std::shared_ptr<Window> window = Engine::Window::Create();
 
-	Scene scene;
-	Renderer renderer(window, &scene);
+	Scene* scene = new Scene();
+	Renderer renderer(window, scene);
 
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -80,7 +80,8 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWwindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 330 core");
 
-
+	ImGuiLayer* imguiLayer = new ImGuiLayer(scene);
+	scene->BindImGuiLayer(imguiLayer);
 	
 
 #pragma region Light Caster Values Initiation
@@ -106,18 +107,21 @@ int main() {
 	DirLight dirLight(&directionalLightDirection,&directionalLightAmbient, &directionalLightDiffuse, &directionalLightSpecular);
 	Shader lampShader("../src/shaders/lampShader_v.glsl", "../src/shaders/lampShader_f.glsl", nullptr);
 
-	Entity* lampObject = scene.CreateEntity("../models/lightbulb/Bombilla.obj");
+//	Entity* lampObject = scene->CreateEntity("../models/lightbulb/Bombilla.obj");
 	
-	lampObject->AddPointLight(PointLight(pointLightAmbient,
-		pointLightDiffuse, pointLightSpecular, pointLightConstant, pointLightLinear, pointLightQuadratic));
-	ShaderProps*  globalLightProps = new ShaderProps(&dirLight, lampObject->GetPointLight(), 32.f);
-
+	
+	ShaderProps*  globalLightProps = new ShaderProps(&dirLight, 32.f);
+	scene->SetShaderProps(globalLightProps);
+	//scene->AddPointLight(lampObject, PointLight());
 	lampShader.initializeShaderProps(globalLightProps);
-	lampObject->SetShader(&lampShader);
+	//lampObject->SetShader(&lampShader);
+	scene->SetLampShader(&lampShader);
+	
 	Shader lightingShader("../src/shaders/model_loading_v.glsl", "../src/shaders/model_loading_f.glsl", nullptr);
 	lightingShader.initializeShaderProps(globalLightProps);
-	scene.CreateEntity("../models/defeated/Defeated.dae", "../models/defeated/Defeated.dae", &lightingShader);
-
+	scene->SetModelShader(&lightingShader);
+	//Entity* firstBossman = scene->CreateEntity("../models/defeated/Defeated.dae", "../models/defeated/Defeated.dae", &lightingShader);
+	
 	bool canMoveLightCube = false;
 	
 
@@ -128,10 +132,7 @@ int main() {
 		lastFrame = currentFrame;
 		input.UpdateDeltaTime(deltaTime);
 		
-		phi = glfwGetTime() * 50;
-		theta = glfwGetTime() * 20;
-
-
+	
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -144,50 +145,14 @@ int main() {
 	
 		input.processInput();
 		
-		scene.UpdateAnimations(deltaTime);
+		scene->UpdateAnimations(deltaTime);
 
 
 	
+		imguiLayer->RenderGUI();
+
 		
 
-		ImGui::Begin("Light Casters");
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::BeginChild("Directional Light");
-		ImGui::Text("Directional Light");
-
-		ImGui::SliderFloat3("Direction", &globalLightProps->dirLightProps->direction->x, -1.f, 1.f);
-		ImGui::ColorEdit3("Ambient", &globalLightProps->dirLightProps->ambient->x);
-		ImGui::ColorEdit3("Diffuse", &globalLightProps->dirLightProps->diffuse->x);
-		ImGui::ColorEdit3("Specular", &globalLightProps->dirLightProps->specular->x);
-		ImGui::BeginChild("Point Light");
-		ImGui::Text("Point Light");
-		if (ImGui::Button("Move Light Caster Around")) {
-			canMoveLightCube = !canMoveLightCube;
-		}
-		if (canMoveLightCube) {
-			ImGui::SliderFloat("Radius", &radius, 1.25f, 2.f);
-			ImGui::BeginDisabled();
-			ImGui::SliderFloat3("Position", &lampObject->transform.translation->x, -2.f, 2.f);
-			ImGui::EndDisabled();
-		}
-		else {
-			ImGui::BeginDisabled();
-			ImGui::SliderFloat("Radius", &radius, 1.25f, 2.f);
-			ImGui::EndDisabled();
-			ImGui::SliderFloat3("Position", &lampObject->transform.translation->x, -2.f, 2.f);
-		}
-
-		ImGui::ColorEdit3("Ambient", &globalLightProps->pointLightProps->ambient.x);
-		ImGui::ColorEdit3("Diffuse", &globalLightProps->pointLightProps->diffuse.x);
-		ImGui::ColorEdit3("Specular", &globalLightProps->pointLightProps->specular.x);
-
-		ImGui::EndChild();
-		ImGui::EndChild();
-		
-		
-		ImGui::End();
-
-		if (canMoveLightCube) moveLightCube(lightPos, radius, theta, phi);
 
 		renderer.RenderEntities();
 
@@ -206,9 +171,5 @@ int main() {
 	return 0;
 }
 
-void moveLightCube(glm::vec3& lightPos, float& radius, float& theta, float& phi) {
-	lightPos = glm::vec3(radius * glm::sin(glm::radians(theta)) * glm::cos(glm::radians(phi)),
-		 radius * glm::sin(glm::radians(theta)) * glm::sin(glm::radians(phi)), radius * glm::cos(glm::radians(theta))) ;
 
-}
 

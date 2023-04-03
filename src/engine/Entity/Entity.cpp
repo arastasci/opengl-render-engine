@@ -14,9 +14,7 @@ namespace Engine {
 		transform.rotation = rotation;
 	}
 
-	Entity::~Entity() {
-		delete& animation;
-	}
+	Entity::~Entity() = default;
 
 	Entity::Entity(std::string& modelPath, std::string& animationPath, Shader* shader)
 		: model(modelPath), shader(shader) {
@@ -43,11 +41,17 @@ namespace Engine {
 	void Entity::SetId(int32_t id) {
 		this->id = id;
 	}
+	int32_t Entity::GetId() {
+		return id;
+	}
+	
 	void Entity::AddPointLight(PointLight&& light)
 	{
 		pointLight = new PointLight(light);
 		pointLight->position = transform.translation;
 	}
+	
+
 	PointLight* Entity::GetPointLight() const {
 		return pointLight;
 	}
@@ -64,7 +68,10 @@ namespace Engine {
 		glm::mat4 shaderModel = glm::mat4(1.f);
 		shaderModel = glm::translate(shaderModel, *transform.translation);
 		shaderModel = glm::scale(shaderModel, transform.scale);
-		//shaderModel = glm::toMat4(glm::quat(transform.rotation));
+		shaderModel *= glm::toMat4(glm::quat(transform.rotation));
+		shaderModel = glm::rotate(shaderModel, glm::radians(transform.rotation.x), glm::vec3(1.f, 0.f, 0.f));
+		shaderModel = glm::rotate(shaderModel, glm::radians(transform.rotation.y), glm::vec3(0.f, 1.f, 0.f));
+		shaderModel = glm::rotate(shaderModel, glm::radians(transform.rotation.z), glm::vec3(0.f, 0.f, 1.f));
 		shader->setShaderProps(shaderModel, viewMatrix, projectionMatrix, cameraPosition);
 		if (isAnimated) {
 			auto transforms = animator->GetFinalBoneMatrices();

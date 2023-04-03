@@ -1,7 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
-
 #include <memory>
+
+#define MAX_POINTLIGHT_COUNT 8
 struct DirLight {
 	glm::vec3* direction;
 
@@ -30,9 +31,10 @@ public:
 	float constant;
 	float linear;
 	float quadratic;
-	PointLight() = default;
-
-	PointLight(glm::vec3 amb, glm::vec3 diff, glm::vec3 spec, float constant, float lin, float quadr)
+	int id;
+	PointLight(glm::vec3 amb = glm::vec3(0.3f, 0.3f, 0.3f),
+		glm::vec3 diff = glm::vec3(1.0f), glm::vec3 spec = glm::vec3(1.0f),
+		float constant = 1.f, float lin = 0.7f, float quadr = 1.8f)
 	{
 		ambient = amb, diffuse = diff,
 			specular = spec, this->constant = constant, linear = lin, quadratic = quadr;
@@ -41,24 +43,36 @@ public:
 	~PointLight() = default;
 };
 struct ShaderProps {
-public:
 	DirLight* dirLightProps;
-	PointLight* pointLightProps;
+	PointLight* pointLightProps[MAX_POINTLIGHT_COUNT];
 
 	float materialShininess;
-
+	int plightCount = 0;
 	ShaderProps() : dirLightProps(), materialShininess(), pointLightProps() {
 
 	}
 
 	~ShaderProps() = default;
 
-	ShaderProps(DirLight* dirLight, PointLight* pointLight, float mShininess) {
-		pointLightProps = pointLight;
+	ShaderProps(DirLight* dirLight, float mShininess) : pointLightProps() {
 		dirLightProps = dirLight;
 		materialShininess = mShininess;
 	}
-
+	bool HasPointLightSpace() {
+		return MAX_POINTLIGHT_COUNT > plightCount;
+	}
+	void AddPointLight(PointLight* pointLight ) {
+		for(int i = 0; i < MAX_POINTLIGHT_COUNT; i++){
+			if(pointLightProps[i] == nullptr){
+				pointLight->id = i;
+				pointLightProps[i] = pointLight;
+				break;
+			}
+		}
+	}
+	void RemovePointLight(int id) {
+		pointLightProps[id] = nullptr;
+	}
 	ShaderProps(const ShaderProps& other) = default;
 };
 
